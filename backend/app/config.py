@@ -19,12 +19,13 @@ class Config:
     DB_NAME = os.getenv('DB_NAME', 'burnout_detection_db')
     
     # SQLAlchemy Configuration
-    SQLALCHEMY_DATABASE_URI = f"mysql+pymysql://root:password@localhost/db_burnout_detection"
+    # Hapus baris yang hardcode, ganti menjadi:
+    SQLALCHEMY_DATABASE_URI = f"mysql+pymysql://{os.getenv('DB_USER', 'root')}:{os.getenv('DB_PASSWORD', '')}@{os.getenv('DB_HOST', 'localhost')}:{os.getenv('DB_PORT', '3306')}/{os.getenv('DB_NAME', 'burnout_detection_db')}"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ECHO = True  # Log SQL queries (debug)
     
     # JWT Configuration
-    JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY', 'daumCd9jvpRJcIwaeLyVJiwlaALCTRojVfpIvcWF6To')
+    JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY', 'W1sPKuTUT2wLfdbnBfClVT5_ITGyInPU_KIYSuEBFgg')
     JWT_ALGORITHM = os.getenv('JWT_ALGORITHM', 'HS256')
     JWT_ACCESS_TOKEN_EXPIRES = int(os.getenv('JWT_ACCESS_TOKEN_EXPIRES', 3600))  # 1 hour
     

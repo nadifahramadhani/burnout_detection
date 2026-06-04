@@ -11,13 +11,13 @@ class Detection(db.Model):
     
     # Burnout Level (dari kombinasi model)
     burnout_level = db.Column(db.Enum('Normal', 'Rendah', 'Sedang', 'Tinggi'), nullable=False)
-    burnout_score = db.Column(db.Float(asdecimal=True, precision=5, scale=2), nullable=False)
+    burnout_score = db.Column(db.Numeric(precision=5, scale=2), nullable=False)
     
     # Probabilitas dari GMM (sebelum input lifestyle)
-    prob_normal = db.Column(db.Float(asdecimal=True, precision=6, scale=4), nullable=False)
-    prob_rendah = db.Column(db.Float(asdecimal=True, precision=6, scale=4), nullable=False)
-    prob_sedang = db.Column(db.Float(asdecimal=True, precision=6, scale=4), nullable=False)
-    prob_tinggi = db.Column(db.Float(asdecimal=True, precision=6, scale=4), nullable=False)
+    prob_normal = db.Column(db.Numeric(precision=6, scale=4), nullable=False)
+    prob_rendah = db.Column(db.Numeric(precision=6, scale=4), nullable=False)
+    prob_sedang = db.Column(db.Numeric(precision=6, scale=4), nullable=False)
+    prob_tinggi = db.Column(db.Numeric(precision=6, scale=4), nullable=False)
     
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
