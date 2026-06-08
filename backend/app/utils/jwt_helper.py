@@ -29,7 +29,7 @@ def create_jwt_token(user_id, email, additional_claims=None):
         claims.update(additional_claims)
     
     token = create_access_token(
-        identity=user_id,
+        identity=str(user_id), 
         additional_claims=claims
     )
     
@@ -63,4 +63,5 @@ def token_required(f):
 
 def get_current_user_id():
     """Get current user ID from JWT token"""
-    return get_jwt_identity()
+    user_id_string = get_jwt_identity()
+    return int(user_id_string)

@@ -8,14 +8,9 @@ class HistoryController:
 
     @staticmethod
     def get_history(user_id, month=None, year=None):
-        """
-        UC04 — Ambil riwayat deteksi
-        Sequence: SELECT * FROM detections (user_id, month)
-        Returns: list riwayat deteksi dengan data jurnal
-        """
         query = Detection.query.filter_by(user_id=user_id)
 
-        # Filter berdasarkan bulan dan tahun jika ada
+        # Filter
         if month and year:
             from sqlalchemy import extract
             query = query.filter(
@@ -38,7 +33,7 @@ class HistoryController:
                 'prob_sedang': float(d.prob_sedang) if d.prob_sedang else 0,
                 'prob_tinggi': float(d.prob_tinggi) if d.prob_tinggi else 0,
                 'jurnaling': {
-                    'text_jurnal': journal.text_journal if journal else '',
+                    'text_jurnal': journal.text_jurnal if journal else '',
                     'mood': journal.mood if journal else ''
                 }
             })
@@ -64,7 +59,7 @@ class HistoryController:
                     'burnout_level': d.burnout_level,
                     'burnout_score': float(d.burnout_score) if d.burnout_score else 0,
                     'jurnaling': {
-                        'text_jurnal': journal.text_journal if journal else '',
+                        'text_jurnal': journal.text_jurnal if journal else '',
                         'mood': journal.mood if journal else ''
                     }
                 })

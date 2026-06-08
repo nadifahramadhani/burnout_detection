@@ -10,7 +10,7 @@ class Detection(db.Model):
     journal_id = db.Column(db.Integer, db.ForeignKey('journals.journal_id'), nullable=False, index=True)
     
     # Burnout Level (dari kombinasi model)
-    burnout_level = db.Column(db.Enum('Normal', 'Rendah', 'Sedang', 'Tinggi'), nullable=False)
+    burnout_level = db.Column(db.Enum('Aman dan Sehat', 'Mulai Penat', 'Burnout Sedang', 'Burnout Berat'), nullable=False)
     burnout_score = db.Column(db.Numeric(precision=5, scale=2), nullable=False)
     
     # Probabilitas dari GMM (sebelum input lifestyle)
