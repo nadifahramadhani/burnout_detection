@@ -38,22 +38,22 @@ def create_app(config_name=None):
     jwt.init_app(app)
     CORS(app, resources={r"/api/*": {"origins": app.config['CORS_ORIGINS']}})
     
-    # # Register blueprints
-    # from app.routes import (
-    #     auth_routes,
-    #     lifestyle_routes,
-    #     journal_routes,
-    #     detection_routes,
-    #     history_routes,
-    #     profile_routes
-    # )
+    # Register blueprints
+    from app.routes import (
+        auth_routes,
+        lifestyle_routes,
+        journal_routes,
+        detection_routes,
+        history_routes,
+        profile_routes
+    )
     
-    # app.register_blueprint(auth_routes.bp)
-    # app.register_blueprint(lifestyle_routes.bp)
-    # app.register_blueprint(journal_routes.bp)
-    # app.register_blueprint(detection_routes.bp)
-    # app.register_blueprint(history_routes.bp)
-    # app.register_blueprint(profile_routes.bp)
+    app.register_blueprint(auth_routes.bp)
+    app.register_blueprint(lifestyle_routes.bp)
+    app.register_blueprint(journal_routes.bp)
+    app.register_blueprint(detection_routes.bp)
+    app.register_blueprint(history_routes.bp)
+    app.register_blueprint(profile_routes.bp)
     
     # Create tables if they don't exist (for development only)
     from app.models import user, lifestyle, journal, detection

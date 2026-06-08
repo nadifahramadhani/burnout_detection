@@ -2,3 +2,6 @@ backend/.env
 backend/.venv
 *.pkl
 *.bin
+*.md
+*.http
+*.json
