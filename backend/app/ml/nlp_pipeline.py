@@ -7,16 +7,10 @@ from flask import current_app
 
 
 class NLPPipeline:
-    """
-    Pipeline NLP sesuai laporan:
-    1. Preprocessing: lowercase, regex cleansing, stopword removal
-    2. Vektorisasi: FastText word vectors
-    """
 
     _instance = None
     _model = None
 
-    # Stopword Indonesia dasar
     STOPWORDS = {
         'yang', 'dan', 'di', 'ke', 'dari', 'ini', 'itu', 'dengan',
         'untuk', 'pada', 'adalah', 'tidak', 'ada', 'juga', 'saya',
@@ -29,7 +23,6 @@ class NLPPipeline:
         self._load_model()
 
     def _load_model(self):
-        """Load FastText model dari file .bin"""
         try:
             model_path = current_app.config.get(
                 'FASTTEXT_MODEL_PATH',
@@ -42,12 +35,6 @@ class NLPPipeline:
             raise
 
     def preprocess(self, text: str) -> str:
-        """
-        Tahap preprocessing sesuai laporan:
-        1. Lowercase
-        2. Regex cleansing (hapus karakter non-alfanumerik)
-        3. Stopword removal
-        """
         # 1. Lowercase
         text = text.lower()
 
@@ -56,21 +43,15 @@ class NLPPipeline:
         text = re.sub(r'\d+', ' ', text)
         text = re.sub(r'\s+', ' ', text).strip()
 
-        # 3. Stopword removal
         tokens = text.split()
         tokens = [t for t in tokens if t not in self.STOPWORDS and len(t) > 1]
 
         return ' '.join(tokens)
 
     def tokenize(self, text: str) -> list:
-        """Tokenisasi teks setelah preprocessing"""
         return text.split()
 
     def vectorize(self, text: str) -> np.ndarray:
-        """
-        Konversi teks menjadi vektor menggunakan FastText
-        FastText menghitung rata-rata vektor semua kata
-        """
         processed = self.preprocess(text)
         if not processed:
             return np.zeros(self._model.get_dimension())
@@ -79,18 +60,13 @@ class NLPPipeline:
         return vector
 
     def pipeline(self, text: str) -> np.ndarray:
-        """
-        Jalankan full pipeline: text → vektor
-        Dipanggil oleh detection_controller
-        """
+        
         return self.vectorize(text)
 
 
-# Singleton loader — inisiasi satu kali saat app startup
 _nlp_pipeline = None
 
 def get_nlp_pipeline():
-    """Get atau inisialisasi NLP pipeline singleton"""
     global _nlp_pipeline
     if _nlp_pipeline is None:
         _nlp_pipeline = NLPPipeline()

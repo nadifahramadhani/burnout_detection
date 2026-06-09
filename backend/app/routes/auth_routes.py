@@ -8,29 +8,17 @@ bp = Blueprint('auth', __name__, url_prefix='/api/auth')
 
 @bp.route('/register', methods=['POST'])
 def register():
-    """
-    POST /api/auth/register
-    Body: { first_name, last_name, email, password, password_confirm, age, gender }
-    
-    Validasi:
-    - Password minimal 6 karakter
-    - Password dan password_confirm harus cocok
-    - Email harus unik
-    """
     try:
         data = request.get_json()
 
-        # Validasi field wajib
         required = ['first_name', 'last_name', 'email', 'password', 'password_confirm']
         for field in required:
             if not data.get(field):
                 return error_response(f'Field {field} wajib diisi', status_code=400)
 
-        # Validasi panjang password
         if len(data['password']) < 6:
             return error_response('Password minimal 6 karakter', status_code=400)
 
-        # Validasi password dan konfirmasi cocok
         if data['password'] != data['password_confirm']:
             return error_response('Password dan konfirmasi password tidak cocok', status_code=400)
 
@@ -55,11 +43,6 @@ def register():
 
 @bp.route('/login', methods=['POST'])
 def login():
-    """
-    POST /api/auth/login
-    Body: { email, password }
-    Returns: { token, user }
-    """
     try:
         data = request.get_json()
 

@@ -2,11 +2,9 @@ import os
 from datetime import timedelta
 from dotenv import load_dotenv
 
-# Load environment variables dari .env
 load_dotenv()
 
 class Config:
-    """Base Configuration"""
     # Flask
     FLASK_ENV = os.getenv('FLASK_ENV', 'development')
     DEBUG = os.getenv('FLASK_DEBUG', True)
@@ -18,8 +16,6 @@ class Config:
     DB_PASSWORD = os.getenv('DB_PASSWORD', '')
     DB_NAME = os.getenv('DB_NAME', 'db_burnout_detection')
     
-    # SQLAlchemy Configuration
-    # Hapus baris yang hardcode, ganti menjadi:
     SQLALCHEMY_DATABASE_URI = f"mysql+pymysql://{os.getenv('DB_USER', 'root')}:{os.getenv('DB_PASSWORD', '')}@{os.getenv('DB_HOST', 'localhost')}:{os.getenv('DB_PORT', '3306')}/{os.getenv('DB_NAME', 'db_burnout_detection')}"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ECHO = True  # Log SQL queries (debug)
@@ -46,13 +42,11 @@ class Config:
 
 
 class DevelopmentConfig(Config):
-    """Development Configuration"""
     DEBUG = True
     TESTING = False
 
 
 class ProductionConfig(Config):
-    """Production Configuration"""
     DEBUG = False
     TESTING = False
     # Matikan SQL echo di production
@@ -60,13 +54,11 @@ class ProductionConfig(Config):
 
 
 class TestingConfig(Config):
-    """Testing Configuration"""
     DEBUG = True
     TESTING = True
     SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'  # Use in-memory database for testing
 
 
-# Dictionary untuk switch config
 config_dict = {
     'development': DevelopmentConfig,
     'production': ProductionConfig,
@@ -74,7 +66,6 @@ config_dict = {
     'default': DevelopmentConfig
 }
 
-# Get active config
 def get_config(env=None):
     if env is None:
         env = os.getenv('FLASK_ENV', 'development')

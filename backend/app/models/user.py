@@ -4,7 +4,6 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 
 class User(db.Model):
-    """User model — tabel user"""
     __tablename__ = 'users'
     
     user_id = db.Column(db.Integer, primary_key=True)
@@ -17,7 +16,6 @@ class User(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
-    # Relationships
     lifestyles = db.relationship('Lifestyle', backref='user', lazy=True, cascade='all, delete-orphan')
     journals = db.relationship('Journal', backref='user', lazy=True, cascade='all, delete-orphan')
     detections = db.relationship('Detection', backref='user', lazy=True, cascade='all, delete-orphan')
@@ -26,15 +24,12 @@ class User(db.Model):
         return f'<User {self.email}>'
     
     def set_password(self, password):
-        """Hash dan set password"""
         self.password = generate_password_hash(password)
     
     def check_password(self, password):
-        """Verify password"""
         return check_password_hash(self.password, password)
     
     def to_dict(self):
-        """Convert to dictionary (untuk JSON response)"""
         return {
             'user_id': self.user_id,
             'first_name': self.first_name,

@@ -19,7 +19,6 @@ class XGBoostModel:
         self._load_models()
 
     def _load_models(self):
-        """Load XGBoost model dan scaler lifestyle dari .pkl"""
         try:
             xgb_path = current_app.config.get('XGBOOST_MODEL_PATH', 'saved_models/model_xgboost.pkl')
             scaler_path = current_app.config.get('SCALER_LIFESTYLE_PATH', 'saved_models/scaler_lifestyle.pkl')
@@ -32,11 +31,8 @@ class XGBoostModel:
             raise
 
     def build_super_matrix(self, text_vector: np.ndarray, lifestyle_array: np.ndarray) -> np.ndarray:
-        """Bangun Super Matrix: 100 fitur teks + 3 fitur lifestyle (total 103)"""
-        # Scale lifestyle data
         lifestyle_scaled = self._scaler.transform(lifestyle_array.reshape(1, -1))
 
-        # Concatenate: [text_vector | lifestyle_scaled]
         super_matrix = np.concatenate([
             text_vector.flatten(),
             lifestyle_scaled.flatten()
@@ -44,13 +40,10 @@ class XGBoostModel:
         return super_matrix
 
     def predict(self, super_matrix: np.ndarray) -> tuple:
-        """Prediksi langsung dengan XGBoost (Tanpa GMM)"""
-        # Prediksi level
         prediction = self._model.predict(super_matrix.reshape(1, -1))
         label = int(prediction[0])
         burnout_level = LABEL_MAP.get(label, 'Aman dan Sehat')
 
-        # Dapatkan probabilitas tiap kelas langsung dari XGBoost
         if hasattr(self._model, 'predict_proba'):
             proba = self._model.predict_proba(super_matrix.reshape(1, -1))[0]
             burnout_score = float(np.max(proba) * 100)
@@ -60,7 +53,6 @@ class XGBoostModel:
 
         return burnout_level, burnout_score, proba
 
-# Singleton
 _xgboost_model = None
 
 def get_xgboost_model():

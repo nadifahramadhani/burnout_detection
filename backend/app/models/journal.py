@@ -2,7 +2,6 @@ from app import db
 from datetime import datetime
 
 class Journal(db.Model):
-    """Journal model — tabel jurnal (catatan harian siswa)"""
     __tablename__ = 'journals'
     
     journal_id = db.Column(db.Integer, primary_key=True)
@@ -11,7 +10,6 @@ class Journal(db.Model):
     mood = db.Column(db.Enum('Senang', 'Biasa Aja', 'Sedih', 'Marah'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
-    # Relationships
     detections = db.relationship('Detection', backref='journal', lazy=True)
     
     def __repr__(self):

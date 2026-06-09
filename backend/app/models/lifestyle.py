@@ -2,7 +2,6 @@ from app import db
 from datetime import datetime
 
 class Lifestyle(db.Model):
-    """Lifestyle model — tabel lifestyle (pola hidup harian)"""
     __tablename__ = 'lifestyles'
     
     lifestyle_id = db.Column(db.Integer, primary_key=True)

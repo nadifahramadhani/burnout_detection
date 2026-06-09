@@ -40,10 +40,6 @@ def get_detection(detection_id):
 @bp.route('/latest', methods=['GET'])
 @jwt_required()
 def get_latest_detection():
-    """
-    GET /api/detection/latest
-    Ambil hasil deteksi terbaru user
-    """
     try:
         user_id = get_jwt_identity()
         detection = Detection.query.filter_by(user_id=user_id)\

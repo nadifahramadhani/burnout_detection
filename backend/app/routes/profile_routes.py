@@ -10,10 +10,6 @@ bp = Blueprint('profile', __name__, url_prefix='/api/profile')
 @bp.route('', methods=['GET'])
 @jwt_required()
 def get_profile():
-    """
-    GET /api/profile
-    Ambil profil user yang sedang login
-    """
     try:
         user_id = get_jwt_identity()
         user = ProfileController.get_profile(user_id)
@@ -30,11 +26,6 @@ def get_profile():
 @bp.route('', methods=['PUT'])
 @jwt_required()
 def update_profile():
-    """
-    PUT /api/profile
-    Update profil user
-    Body: { first_name, last_name, age, gender }
-    """
     try:
         user_id = get_jwt_identity()
         data = request.get_json()

@@ -10,11 +10,6 @@ bp = Blueprint('history', __name__, url_prefix='/api/history')
 @bp.route('', methods=['GET'])
 @jwt_required()
 def get_history():
-    """
-    GET /api/history?view=monthly&month=6&year=2026
-    Sesuai sequence UC04: GET/history(user_id=&view=monthly)
-    Returns: list deteksi + data jurnal per bulan (kalender, list entri)
-    """
     try:
         user_id = get_jwt_identity()
         view = request.args.get('view', 'all')
@@ -35,9 +30,6 @@ def get_history():
 @bp.route('/date', methods=['GET'])
 @jwt_required()
 def get_history_by_date():
-    """
-    GET /api/history/date?date=2026-06-01
-    """
     try:
         user_id = get_jwt_identity()
         date_str = request.args.get('date')

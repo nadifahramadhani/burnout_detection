@@ -1,18 +1,12 @@
-"""
-Application Entry Point
-Run the Flask development server
-"""
+
 import os
 from app import create_app
 
 if __name__ == '__main__':
-    # Get config from environment or use default (development)
     config_name = os.getenv('FLASK_ENV', 'development')
     
-    # Create Flask app
     app = create_app(config_name)
     
-    # Get API configuration
     api_host = os.getenv('API_HOST', '127.0.0.1')
     api_port = int(os.getenv('API_PORT', 5000))
     debug = os.getenv('FLASK_DEBUG', True) == 'True'

@@ -10,11 +10,6 @@ bp = Blueprint('lifestyle', __name__, url_prefix='/api/lifestyle')
 @bp.route('', methods=['POST'])
 @jwt_required()
 def create_lifestyle():
-    """
-    POST /api/lifestyle
-    Headers: Authorization: Bearer <token>
-    Body: { study_hours_per_day, sleep_hours, exercise_minute, breaks_per_day, coffee_intake_mg }
-    """
     try:
         user_id = get_jwt_identity()
         data = request.get_json()
@@ -35,10 +30,6 @@ def create_lifestyle():
 @bp.route('/latest', methods=['GET'])
 @jwt_required()
 def get_latest():
-    """
-    GET /api/lifestyle/latest
-    Ambil data pola hidup terbaru milik user yang sedang login
-    """
     try:
         user_id = get_jwt_identity()
         lifestyle = LifestyleController.get_latest_by_user(user_id)

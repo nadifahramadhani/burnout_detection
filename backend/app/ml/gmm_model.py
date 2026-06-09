@@ -5,11 +5,6 @@ from flask import current_app
 
 
 class GMMModel:
-    """
-    Gaussian Mixture Model untuk clustering probabilistik
-    Sesuai laporan: output berupa probabilitas 4 komponen
-    (Normal, Rendah, Sedang, Tinggi)
-    """
 
     _model = None
     _scaler = None
@@ -18,7 +13,6 @@ class GMMModel:
         self._load_models()
 
     def _load_models(self):
-        """Load GMM model dan scaler dari file .pkl"""
         try:
             gmm_path = current_app.config.get('GMM_MODEL_PATH', 'saved_models/model_gmm.pkl')
             scaler_path = current_app.config.get('SCALER_GMM_PATH', 'saved_models/scaler_gmm.pkl')
@@ -31,26 +25,16 @@ class GMMModel:
             raise
 
     def get_probabilities(self, super_matrix: np.ndarray) -> np.ndarray:
-        """
-        Hitung probabilitas cluster dari super matrix
-        Output: array [prob_normal, prob_rendah, prob_sedang, prob_tinggi]
-        """
-        # Scale input
         scaled = self._scaler.transform(super_matrix.reshape(1, -1))
 
-        # Predict probabilities
         probs = self._model.predict_proba(scaled)
-        return probs[0]  # return 1D array
+        return probs[0] 
 
     def pseudo_label(self, super_matrix: np.ndarray) -> int:
-        """
-        Dapatkan pseudo label dari GMM (untuk input ke XGBoost)
-        """
         scaled = self._scaler.transform(super_matrix.reshape(1, -1))
         return int(self._model.predict(scaled)[0])
 
 
-# Singleton
 _gmm_model = None
 
 def get_gmm_model():

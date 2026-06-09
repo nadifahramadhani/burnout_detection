@@ -1,7 +1,3 @@
-"""
-JWT Helper Utilities
-Functions for JWT token creation and verification
-"""
 from flask_jwt_extended import create_access_token, get_jwt_identity
 from flask import current_app
 from functools import wraps
@@ -9,17 +5,6 @@ from flask import jsonify
 
 
 def create_jwt_token(user_id, email, additional_claims=None):
-    """
-    Create JWT access token for a user
-    
-    Args:
-        user_id: int - User ID
-        email: str - User email
-        additional_claims: dict - Additional data to include in token
-    
-    Returns:
-        str - JWT token
-    """
     claims = {
         'user_id': user_id,
         'email': email
@@ -37,15 +22,6 @@ def create_jwt_token(user_id, email, additional_claims=None):
 
 
 def token_required(f):
-    """
-    Decorator to require valid JWT token
-    
-    Usage:
-        @token_required
-        def protected_route():
-            user_id = get_jwt_identity()
-            ...
-    """
     @wraps(f)
     def decorated(*args, **kwargs):
         try:
@@ -62,6 +38,5 @@ def token_required(f):
 
 
 def get_current_user_id():
-    """Get current user ID from JWT token"""
     user_id_string = get_jwt_identity()
     return int(user_id_string)

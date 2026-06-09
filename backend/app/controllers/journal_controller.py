@@ -19,7 +19,7 @@ class JournalController:
             mood=mood
         )
         db.session.add(journal)
-        db.session.flush()  # dapatkan journal_id tanpa commit
+        db.session.flush()  
 
 
         lifestyle = LifestyleController.create_lifestyle(
