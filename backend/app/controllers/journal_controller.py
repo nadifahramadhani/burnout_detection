@@ -63,3 +63,15 @@ class JournalController:
             journal_id=journal_id,
             user_id=user_id
         ).first()
+
+    @staticmethod
+    def get_all_by_user(user_id, page=1, per_page=10):
+        query = Journal.query.filter_by(user_id=user_id)
+
+        total = query.count()
+        journals = query.order_by(Journal.created_at.desc())\
+            .offset((page - 1) * per_page)\
+            .limit(per_page)\
+            .all()
+
+        return journals, total

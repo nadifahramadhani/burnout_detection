@@ -3,7 +3,6 @@ import joblib
 import numpy as np
 from flask import current_app
 
-# Mapping label ke burnout level (sesuai ERD ENUM)
 LABEL_MAP = {
     0: 'Aman dan Sehat',
     1: 'Mulai Penat',

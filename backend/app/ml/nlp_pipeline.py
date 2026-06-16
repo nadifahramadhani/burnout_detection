@@ -1,6 +1,5 @@
 # app/ml/nlp_pipeline.py
 import re
-import joblib
 import numpy as np
 import fasttext
 from flask import current_app

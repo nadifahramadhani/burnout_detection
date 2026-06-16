@@ -7,7 +7,6 @@ class LifestyleController:
 
     @staticmethod
     def create_lifestyle(user_id, data, journal_id=None):
-        """Simpan data pola hidup mahasiswa"""
         lifestyle = Lifestyle(
             user_id=user_id,
             journal_id=journal_id,
@@ -23,18 +22,18 @@ class LifestyleController:
 
     @staticmethod
     def get_latest_by_user(user_id):
-        """
-        Ambil data lifestyle terbaru milik user
-        Digunakan oleh detection_controller saat proses prediksi
-        Sesuai sequence UC03: SELECT lifestyle terbaru WHERE user_id = ?
-        """
         return Lifestyle.query.filter_by(user_id=user_id)\
                               .order_by(Lifestyle.created_at.desc())\
                               .first()
 
     @staticmethod
-    def get_all_by_user(user_id):
-        """Ambil semua lifestyle history milik user"""
-        return Lifestyle.query.filter_by(user_id=user_id)\
-                              .order_by(Lifestyle.created_at.desc())\
-                              .all()
+    def get_all_by_user(user_id, page=1, per_page=10):
+        query = Lifestyle.query.filter_by(user_id=user_id)
+
+        total = query.count()
+        lifestyles = query.order_by(Lifestyle.created_at.desc())\
+            .offset((page - 1) * per_page)\
+            .limit(per_page)\
+            .all()
+
+        return lifestyles, total

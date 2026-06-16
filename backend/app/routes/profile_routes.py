@@ -39,3 +39,21 @@ def update_profile():
 
     except Exception as e:
         return error_response('Gagal mengupdate profil', str(e), 500)
+
+@bp.route('/change-password', methods=['PUT'])
+@jwt_required()
+def change_password():
+    try:
+        user_id = get_jwt_identity()
+        data = request.get_json()
+        
+        user, message, status = ProfileController.change_password(
+            user_id, data.get('old_password'), data.get('new_password'), data.get('confirm_new_password')
+        )
+        if not user:
+            return error_response(message, status_code=status)
+        return success_response(message, data=user.to_dict(), status_code=status)
+    except Exception as e:
+        return error_response('Gagal mengubah password', str(e), 500)
+    
+        

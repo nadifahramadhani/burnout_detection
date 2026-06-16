@@ -1,37 +1,39 @@
 # app/routes/detection_routes.py
 from flask import Blueprint, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from app.models.detection import Detection
-from app.models.journal import Journal
-from app.utils.response import success_response, error_response
+from app.controllers.detection_controller import DetectionController
+from app.utils.response import success_response, error_response, paginated_response
 
 bp = Blueprint('detection', __name__, url_prefix='/api/detection')
+
+
+@bp.route('', methods=['GET'])
+@jwt_required()
+def get_detections():
+    try:
+        user_id = get_jwt_identity()
+        page = max(request.args.get('page', 1, type=int), 1)
+        per_page = min(max(request.args.get('per_page', 10, type=int), 1), 100)
+
+        detections, total = DetectionController.get_all_by_user(user_id, page, per_page)
+
+        return paginated_response(detections, total, page, per_page, 'Deteksi berhasil diambil')
+
+    except Exception as e:
+        return error_response('Gagal mengambil deteksi', str(e), 500)
 
 
 @bp.route('/<int:detection_id>', methods=['GET'])
 @jwt_required()
 def get_detection(detection_id):
-    """
-    GET /api/detection/<detection_id>
-    Ambil detail hasil deteksi tertentu
-    """
     try:
         user_id = get_jwt_identity()
-        detection = Detection.query.filter_by(
-            detection_id=detection_id,
-            user_id=user_id
-        ).first()
+        detection = DetectionController.get_by_id(user_id, detection_id)
 
         if not detection:
             return error_response('Deteksi tidak ditemukan', status_code=404)
 
-        journal = Journal.query.get(detection.journal_id)
-        result = {
-            **detection.to_dict(),
-            'journal': journal.to_dict() if journal else None
-        }
-
-        return success_response('Deteksi berhasil diambil', data=result)
+        return success_response('Deteksi berhasil diambil', data=detection)
 
     except Exception as e:
         return error_response('Gagal mengambil deteksi', str(e), 500)
@@ -42,20 +44,12 @@ def get_detection(detection_id):
 def get_latest_detection():
     try:
         user_id = get_jwt_identity()
-        detection = Detection.query.filter_by(user_id=user_id)\
-                                   .order_by(Detection.created_at.desc())\
-                                   .first()
+        detection = DetectionController.get_latest_by_user(user_id)
 
         if not detection:
             return error_response('Belum ada hasil deteksi', status_code=404)
 
-        journal = Journal.query.get(detection.journal_id)
-        result = {
-            **detection.to_dict(),
-            'journal': journal.to_dict() if journal else None
-        }
-
-        return success_response('Deteksi terbaru berhasil diambil', data=result)
+        return success_response('Deteksi terbaru berhasil diambil', data=detection)
 
     except Exception as e:
         return error_response('Gagal mengambil deteksi', str(e), 500)

@@ -1,9 +1,26 @@
 from flask import Blueprint, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.controllers.journal_controller import JournalController
-from app.utils.response import success_response, error_response
+from app.utils.response import success_response, error_response, paginated_response
 
 bp = Blueprint('journal', __name__, url_prefix='/api/journal')
+
+
+@bp.route('', methods=['GET'])
+@jwt_required()
+def get_journals():
+    try:
+        user_id = get_jwt_identity()
+        page = max(request.args.get('page', 1, type=int), 1)
+        per_page = min(max(request.args.get('per_page', 10, type=int), 1), 100)
+
+        journals, total = JournalController.get_all_by_user(user_id, page, per_page)
+        data = [journal.to_dict() for journal in journals]
+
+        return paginated_response(data, total, page, per_page, 'Jurnal berhasil diambil')
+
+    except Exception as e:
+        return error_response('Gagal mengambil jurnal', str(e), 500)
 
 
 @bp.route('', methods=['POST'])

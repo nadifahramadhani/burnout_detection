@@ -7,21 +7,25 @@ load_dotenv()
 class Config:
     # Flask
     FLASK_ENV = os.getenv('FLASK_ENV', 'development')
-    DEBUG = os.getenv('FLASK_DEBUG', True)
+    DEBUG = os.getenv('FLASK_DEBUG', 'True') == 'True'
     
-    # Database
+    # Database Credentials
     DB_HOST = os.getenv('DB_HOST', 'localhost')
     DB_PORT = os.getenv('DB_PORT', 3306)
     DB_USER = os.getenv('DB_USER', 'root')
     DB_PASSWORD = os.getenv('DB_PASSWORD', '')
     DB_NAME = os.getenv('DB_NAME', 'db_burnout_detection')
     
-    SQLALCHEMY_DATABASE_URI = f"mysql+pymysql://{os.getenv('DB_USER', 'root')}:{os.getenv('DB_PASSWORD', '')}@{os.getenv('DB_HOST', 'localhost')}:{os.getenv('DB_PORT', '3306')}/{os.getenv('DB_NAME', 'db_burnout_detection')}"
+    SQLALCHEMY_DATABASE_URI = f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ECHO = True  # Log SQL queries (debug)
     
-    # JWT Configuration
-    JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY', 'W1sPKuTUT2wLfdbnBfClVT5_ITGyInPU_KIYSuEBFgg')
+    JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY')
+    
+    # Validasi Keamanan Ekstrem: Matikan aplikasi jika Secret Key tidak ada di .env!
+    if not JWT_SECRET_KEY:
+        raise ValueError("CRITICAL SECURITY ERROR: JWT_SECRET_KEY tidak ditemukan di file .env! Dilarang keras menggunakan hardcoded secret.")
+        
     JWT_ALGORITHM = os.getenv('JWT_ALGORITHM', 'HS256')
     JWT_ACCESS_TOKEN_EXPIRES = int(os.getenv('JWT_ACCESS_TOKEN_EXPIRES', 3600))  # 1 hour
     
@@ -49,14 +53,13 @@ class DevelopmentConfig(Config):
 class ProductionConfig(Config):
     DEBUG = False
     TESTING = False
-    # Matikan SQL echo di production
     SQLALCHEMY_ECHO = False
 
 
 class TestingConfig(Config):
     DEBUG = True
     TESTING = True
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'  # Use in-memory database for testing
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'  
 
 
 config_dict = {

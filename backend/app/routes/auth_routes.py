@@ -1,5 +1,6 @@
 # app/routes/auth_routes.py
 from flask import Blueprint, request
+from flask_jwt_extended import get_jwt, jwt_required
 from app.controllers.auth_controller import AuthController
 from app.utils.response import success_response, error_response
 
@@ -64,3 +65,14 @@ def login():
 
     except Exception as e:
         return error_response('Login gagal', str(e), 500)
+
+
+@bp.route('/logout', methods=['POST'])
+@jwt_required()
+def logout():
+    try:
+        message, status = AuthController.logout(get_jwt())
+        return success_response(message, status_code=status)
+
+    except Exception as e:
+        return error_response('Logout gagal', str(e), 500)

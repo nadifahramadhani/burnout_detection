@@ -21,6 +21,18 @@ def create_app(config_name=None):
     db.init_app(app)
     jwt.init_app(app)
     CORS(app, resources={r"/api/*": {"origins": app.config['CORS_ORIGINS']}})
+
+    @jwt.token_in_blocklist_loader
+    def check_if_token_revoked(jwt_header, jwt_payload):
+        from app.models.token_blacklist import TokenBlacklist
+        return TokenBlacklist.is_jti_blacklisted(jwt_payload['jti'])
+
+    @jwt.revoked_token_loader
+    def revoked_token_callback(jwt_header, jwt_payload):
+        return {
+            'success': False,
+            'message': 'Token sudah logout'
+        }, 401
     
     from app.routes import (
         auth_routes,
@@ -38,7 +50,7 @@ def create_app(config_name=None):
     app.register_blueprint(history_routes.bp)
     app.register_blueprint(profile_routes.bp)
     
-    from app.models import user, lifestyle, journal, detection
+    from app.models import user, lifestyle, journal, detection, token_blacklist
 
     with app.app_context():
         db.create_all()
