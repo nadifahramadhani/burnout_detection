@@ -55,7 +55,7 @@ class JournalController:
         db.session.add(detection)
         db.session.commit()
 
-        return journal, detection
+        return journal, detection, lifestyle
 
     @staticmethod
     def get_journal_by_id(journal_id, user_id):

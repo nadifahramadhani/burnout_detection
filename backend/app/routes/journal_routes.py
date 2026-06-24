@@ -44,7 +44,7 @@ def create_journal():
         if not pola_hidup.get('study_hours_per_day') or not pola_hidup.get('sleep_hours'):
             return error_response('Data pola hidup (jam belajar & tidur) wajib diisi', status_code=400)
 
-        journal, detection = JournalController.create_journal_with_detection(
+        journal, detection, lifestyle = JournalController.create_journal_with_detection(
             user_id=user_id,
             text_jurnal=data['text_jurnal'],
             mood=data['mood'],
@@ -60,7 +60,14 @@ def create_journal():
                 'prob_rendah': detection.prob_rendah,
                 'prob_sedang': detection.prob_sedang,
                 'prob_tinggi': detection.prob_tinggi,
-            }
+            },
+            'lifestyle': {
+                'sleep_hours': float(lifestyle.sleep_hours) if lifestyle else 0,
+                'exercise_minute': lifestyle.exercise_minute if lifestyle else 0,
+                'study_hours_per_day': float(lifestyle.study_hours_per_day) if lifestyle else 0,
+                'breaks_per_day': lifestyle.breaks_per_day if lifestyle else 0,
+                'coffee_intake_mg': lifestyle.coffee_intake_mg if lifestyle else 0
+            },
         }, status_code=200)
 
     except Exception as e:
