@@ -1,32 +1,33 @@
 import 'package:flutter/material.dart';
 
 import '../core/constants/app_typography.dart';
-import '../features/onboarding/presentation/welcome_page.dart'; // Import WelcomePage
-import '../features/onboarding/presentation/onboarding_page.dart'; // Import OnboardingPage yang baru (Slider)
+import '../features/onboarding/presentation/welcome_page.dart';
+import '../features/onboarding/presentation/onboarding_page.dart';
 import '../features/splash/presentation/splash_page.dart';
+import '../features/auth/presentation/login_page.dart';
+import '../features/auth/presentation/register_page.dart';
 
 class AppRouter {
   AppRouter._();
 
   static const String splash = '/';
-  static const String welcome = '/welcome'; // Tambahkan rute welcome
+  static const String welcome = '/welcome';
   static const String onboarding = '/onboarding';
   static const String login = '/login';
+  static const String register = '/register';
 
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
       case splash:
         return MaterialPageRoute(builder: (_) => const SplashPage());
       case welcome:
-        return MaterialPageRoute(
-          builder: (_) => const WelcomePage(),
-        ); // Arahkan ke WelcomePage
+        return MaterialPageRoute(builder: (_) => const WelcomePage());
       case onboarding:
-        return MaterialPageRoute(
-          builder: (_) => const OnboardingPage(),
-        ); // Arahkan ke OnboardingPage
+        return MaterialPageRoute(builder: (_) => const OnboardingPage());
       case login:
-        return MaterialPageRoute(builder: (_) => const _LoginPlaceholderPage());
+        return MaterialPageRoute(builder: (_) => const LoginPage());
+      case register:
+        return MaterialPageRoute(builder: (_) => const RegisterPage());
       default:
         return MaterialPageRoute(builder: (_) => const _NotFoundPage());
     }

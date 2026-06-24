@@ -35,24 +35,23 @@ class _OnboardingPageState extends State<OnboardingPage> {
     OnboardingData(
       backgroundColor: const Color(0xFFB298E7),
       imagePath: 'assets/images/onboarding_1.svg',
-      title: 'Mindara',
+      title: 'Mulai Harimu Tanpa Beban',
       description:
-          'In sit amet eget a proin. Viverra nunc tristique nulla quis non dui ipsum mattis nulla. Bibendum turpis dui ut vestibulum turpis parturient suspendisse posuere.',
+          'Kenali dirimu lebih dekat melalui jurnal singkat. Cukup luangkan beberapa menit sehari untuk mencatat apa yang kamu rasakan dan pikirkan hari ini.',
     ),
     OnboardingData(
       backgroundColor: const Color(0xFFD1F58C),
       imagePath: 'assets/images/onboarding_2.svg',
-      title: 'Mindara',
+      title: 'Lelah dan Penat Itu Wajar',
       description:
-          'In sit amet eget a proin. Viverra nunc tristique nulla quis non dui ipsum mattis nulla. Bibendum turpis dui ut vestibulum turpis parturient suspendisse posuere.',
+          'Merasa kewalahan dengan padatnya aktivitas? Pantau terus pola tidur, suasana hati, dan kebiasaan harianmu agar tahu kapan tubuh butuh jeda.',
     ),
-    // --- STEP 3 (Ungu Tua) ---
     OnboardingData(
-      backgroundColor: const Color(0xFF5A4AA2), // Sesuai warna dari kodemu
+      backgroundColor: const Color(0xFF5A4AA2),
       imagePath: 'assets/images/onboarding_3.svg',
-      title: 'Mindara',
+      title: 'Cegah Burnout Lebih Awal',
       description:
-          'In sit amet eget a proin. Viverra nunc tristique nulla quis non dui ipsum mattis nulla. Bibendum turpis dui ut vestibulum turpis parturient suspendisse posuere.',
+          'Jangan tunggu sampai benar-benar kehabisan energi. Mindara akan membantumu mengenali tanda-tanda kelelahan mental sejak dini agar kamu bisa kembali pulih.',
     ),
   ];
 
@@ -145,7 +144,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                     _pages[_currentIndex].title,
                     style: AppTypography.title2.copyWith(
                       color: AppColors.mint900,
-                      fontSize: 40,
+                      fontSize: 28,
                       height: 1.45,
                       letterSpacing: -0.40,
                     ),
@@ -167,7 +166,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       SizedBox(
-                        width: 80, 
+                        width: 80,
                         child: Align(
                           alignment: Alignment.centerLeft,
                           child: _currentIndex == 0
