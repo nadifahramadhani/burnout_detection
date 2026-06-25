@@ -6,6 +6,7 @@ import '../features/onboarding/presentation/onboarding_page.dart';
 import '../features/splash/presentation/splash_page.dart';
 import '../features/auth/presentation/login_page.dart';
 import '../features/auth/presentation/register_page.dart';
+import '../features/home/presentation/main_page.dart';
 
 class AppRouter {
   AppRouter._();
@@ -15,6 +16,7 @@ class AppRouter {
   static const String onboarding = '/onboarding';
   static const String login = '/login';
   static const String register = '/register';
+  static const String main = '/main';
 
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -28,6 +30,8 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => const LoginPage());
       case register:
         return MaterialPageRoute(builder: (_) => const RegisterPage());
+      case main:
+        return MaterialPageRoute(builder: (_) => const MainPage());
       default:
         return MaterialPageRoute(builder: (_) => const _NotFoundPage());
     }

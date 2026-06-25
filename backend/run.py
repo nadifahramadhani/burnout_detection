@@ -4,6 +4,7 @@ from app import create_app
 
 if __name__ == '__main__':
     config_name = os.getenv('FLASK_ENV', 'development')
+    print("Sedang inisialisasi aplikasi...")
     
     app = create_app(config_name)
     
@@ -20,5 +21,5 @@ if __name__ == '__main__':
         host=api_host,
         port=api_port,
         debug=debug,
-        use_reloader=True
+        use_reloader=False
     )

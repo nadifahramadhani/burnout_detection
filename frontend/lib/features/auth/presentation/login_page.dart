@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 
+import '../../../app/router.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_typography.dart';
-import '../../../app/router.dart';
+import '../providers/auth_provider.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -13,6 +15,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  final _formKey = GlobalKey<FormState>(); // Kunci untuk memvalidasi form
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
@@ -23,8 +26,39 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
+  // Fungsi untuk mengeksekusi login
+  void _handleLogin(AuthProvider authProvider) async {
+    if (_formKey.currentState!.validate()) {
+      final success = await authProvider.login(
+        _emailController.text.trim(),
+        _passwordController.text.trim(),
+      );
+
+      if (!mounted) return;
+
+      if (success) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Login Berhasil!'),
+            backgroundColor: AppColors.primary,
+          ),
+        );
+        Navigator.of(context).pushReplacementNamed(AppRouter.main);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(authProvider.errorMessage ?? 'Gagal login'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final authProvider = context.watch<AuthProvider>();
+
     return Scaffold(
       backgroundColor: AppColors.secondaryLight,
       body: Stack(
@@ -38,7 +72,6 @@ class _LoginPageState extends State<LoginPage> {
               fit: BoxFit.fitWidth,
             ),
           ),
-
           SafeArea(
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
@@ -47,17 +80,23 @@ class _LoginPageState extends State<LoginPage> {
                 children: [
                   Text(
                     'Mindara',
-                    style: AppTypography.h4.copyWith(color: AppColors.mint900),
+                    style: AppTypography.title3.copyWith(
+                      color: AppColors.mint900,
+                      fontSize: 28,
+                      fontWeight: AppTypography.bold,
+                      letterSpacing: -0.20,
+                    ),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 48),
-
                   Text(
                     'Selamat Datang!',
                     style: AppTypography.title1.copyWith(
                       color: AppColors.mint900,
-                      fontSize: 36,
-                      letterSpacing: -0.4,
+                      fontSize: 40,
+                      fontWeight: AppTypography.bold,
+                      height: 1.45,
+                      letterSpacing: -0.40,
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -65,6 +104,9 @@ class _LoginPageState extends State<LoginPage> {
                     'Senang melihatmu kembali! Yuk, catat kabarmu hari ini.',
                     style: AppTypography.body1.copyWith(
                       color: AppColors.mint900,
+                      fontSize: 16,
+                      fontWeight: AppTypography.medium,
+                      height: 1.50,
                     ),
                   ),
                   const SizedBox(height: 40),
@@ -80,28 +122,35 @@ class _LoginPageState extends State<LoginPage> {
                           color: AppColors.mint900,
                           borderRadius: BorderRadius.circular(32),
                         ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // Input Email
-                            _buildInputLabel('Email'),
-                            const SizedBox(height: 8),
-                            _buildTextField(
-                              controller: _emailController,
-                              hintText: '',
-                              keyboardType: TextInputType.emailAddress,
-                            ),
-                            const SizedBox(height: 24),
+                        //FORM
+                        child: Form(
+                          key: _formKey,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _buildInputLabel('Email'),
+                              const SizedBox(height: 8),
+                              _buildTextField(
+                                controller: _emailController,
+                                hintText: 'Masukkan email',
+                                keyboardType: TextInputType.emailAddress,
+                                validator: (value) =>
+                                    value!.isEmpty ? 'Email wajib diisi' : null,
+                              ),
+                              const SizedBox(height: 24),
 
-                            // Input Password
-                            _buildInputLabel('Password'),
-                            const SizedBox(height: 8),
-                            _buildTextField(
-                              controller: _passwordController,
-                              hintText: '',
-                              obscureText: true,
-                            ),
-                          ],
+                              _buildInputLabel('Password'),
+                              const SizedBox(height: 8),
+                              _buildTextField(
+                                controller: _passwordController,
+                                hintText: 'Masukkan password',
+                                obscureText: true,
+                                validator: (value) => value!.isEmpty
+                                    ? 'Password wajib diisi'
+                                    : null,
+                              ),
+                            ],
+                          ),
                         ),
                       ),
 
@@ -112,7 +161,9 @@ class _LoginPageState extends State<LoginPage> {
                         child: SizedBox(
                           height: 62,
                           child: ElevatedButton(
-                            onPressed: () {},
+                            onPressed: authProvider.isLoading
+                                ? null
+                                : () => _handleLogin(authProvider),
                             style: ElevatedButton.styleFrom(
                               elevation: 0,
                               backgroundColor: AppColors.mint200,
@@ -121,13 +172,19 @@ class _LoginPageState extends State<LoginPage> {
                                 borderRadius: BorderRadius.circular(24),
                               ),
                             ),
-                            child: Text(
-                              'Masuk',
-                              style: AppTypography.h6.copyWith(
-                                color: AppColors.mint900,
-                                fontWeight: AppTypography.bold,
-                              ),
-                            ),
+                            child: authProvider.isLoading
+                                ? const CircularProgressIndicator(
+                                    color: AppColors.mint900,
+                                  )
+                                : Text(
+                                    'Masuk',
+                                    style: AppTypography.h6.copyWith(
+                                      color: AppColors.mint900,
+                                      fontSize: 20,
+                                      fontWeight: AppTypography.bold,
+                                      height: 1.20,
+                                    ),
+                                  ),
                           ),
                         ),
                       ),
@@ -135,26 +192,25 @@ class _LoginPageState extends State<LoginPage> {
                   ),
 
                   const SizedBox(height: 32),
-
                   Center(
                     child: GestureDetector(
-                      onTap: () {
-                        Navigator.of(
-                          context,
-                        ).pushReplacementNamed(AppRouter.register);
-                      },
+                      onTap: () => Navigator.of(
+                        context,
+                      ).pushReplacementNamed(AppRouter.register),
                       child: Text.rich(
                         TextSpan(
                           text: 'Belum punya akun? ',
                           style: AppTypography.body2.copyWith(
-                            color: AppColors.dark,
+                            color: const Color(0xFF0A0A0A),
+                            fontSize: 12,
                             fontWeight: AppTypography.medium,
                           ),
                           children: [
                             TextSpan(
                               text: 'Daftar',
                               style: AppTypography.body2.copyWith(
-                                color: AppColors.dark,
+                                color: const Color(0xFF0A0A0A),
+                                fontSize: 12,
                                 fontWeight: AppTypography.bold,
                               ),
                             ),
@@ -163,7 +219,6 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                   ),
-
                   const SizedBox(height: 120),
                 ],
               ),
@@ -178,8 +233,10 @@ class _LoginPageState extends State<LoginPage> {
     return Text(
       text,
       style: AppTypography.body2.copyWith(
-        color: Colors.white,
+        color: const Color(0xFFFAFAFA),
+        fontSize: 14,
         fontWeight: AppTypography.bold,
+        height: 1.43,
       ),
     );
   }
@@ -189,11 +246,13 @@ class _LoginPageState extends State<LoginPage> {
     required String hintText,
     bool obscureText = false,
     TextInputType keyboardType = TextInputType.text,
+    String? Function(String?)? validator,
   }) {
     return TextFormField(
       controller: controller,
       obscureText: obscureText,
       keyboardType: keyboardType,
+      validator: validator,
       style: AppTypography.body1.copyWith(color: AppColors.dark),
       decoration: InputDecoration(
         hintText: hintText,
@@ -207,6 +266,7 @@ class _LoginPageState extends State<LoginPage> {
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide.none,
         ),
+        errorStyle: const TextStyle(color: Color(0xFFFFB4AB)),
       ),
     );
   }

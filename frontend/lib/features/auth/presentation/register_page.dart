@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 
 import '../../../app/router.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_typography.dart';
+import '../providers/auth_provider.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -13,7 +15,7 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  // Controller untuk 5 buah input field
+  final _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
@@ -31,8 +33,41 @@ class _RegisterPageState extends State<RegisterPage> {
     super.dispose();
   }
 
+  void _handleRegister(AuthProvider authProvider) async {
+    if (_formKey.currentState!.validate()) {
+      final success = await authProvider.register(
+        _emailController.text.trim(),
+        _passwordController.text.trim(),
+        _confirmPasswordController.text.trim(),
+        _firstNameController.text.trim(),
+        _lastNameController.text.trim(),
+      );
+
+      if (!mounted) return;
+
+      if (success) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Registrasi Berhasil! Silakan Login.'),
+            backgroundColor: AppColors.primary,
+          ),
+        );
+        Navigator.of(context).pushReplacementNamed(AppRouter.login);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(authProvider.errorMessage ?? 'Gagal mendaftar'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final authProvider = context.watch<AuthProvider>();
+
     return Scaffold(
       backgroundColor: AppColors.secondaryLight,
       body: Stack(
@@ -58,31 +93,26 @@ class _RegisterPageState extends State<RegisterPage> {
                       color: AppColors.mint900,
                       fontSize: 28,
                       fontWeight: AppTypography.bold,
-                      letterSpacing: -0.20,
                     ),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 16),
-
                   Text(
                     'Daftar Sekarang!',
                     style: AppTypography.title1.copyWith(
                       color: AppColors.mint900,
-                      fontSize: 36, // Sedikit disesuaikan agar pas
+                      fontSize: 36,
                       fontWeight: AppTypography.bold,
                       height: 1.2,
-                      letterSpacing: -0.40,
                     ),
                   ),
                   const SizedBox(height: 4),
-
                   Text(
                     'Lengkapi data dirimu untuk memulai perjalanan jurnal mentalmu.',
                     style: AppTypography.body1.copyWith(
                       color: AppColors.mint900,
-                      fontSize: 14, // Disesuaikan agar lebih ringkas
+                      fontSize: 14,
                       fontWeight: AppTypography.medium,
-                      height: 1.40,
                     ),
                   ),
                   const SizedBox(height: 20),
@@ -98,55 +128,72 @@ class _RegisterPageState extends State<RegisterPage> {
                           color: AppColors.mint900,
                           borderRadius: BorderRadius.circular(32),
                         ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // 1. Input Email
-                            _buildInputLabel('Email'),
-                            const SizedBox(height: 6), // Dari 8 ke 6
-                            _buildTextField(
-                              controller: _emailController,
-                              hintText: '',
-                              keyboardType: TextInputType.emailAddress,
-                            ),
-                            const SizedBox(height: 12), // Dari 16 ke 12
-                            // 2. Input Nama Depan
-                            _buildInputLabel('Nama Depan'),
-                            const SizedBox(height: 6),
-                            _buildTextField(
-                              controller: _firstNameController,
-                              hintText: '',
-                            ),
-                            const SizedBox(height: 12),
+                        child: Form(
+                          key: _formKey,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _buildInputLabel('Email'),
+                              const SizedBox(height: 6),
+                              _buildTextField(
+                                controller: _emailController,
+                                hintText: 'Masukkan email',
+                                keyboardType: TextInputType.emailAddress,
+                                validator: (val) =>
+                                    val!.isEmpty ? 'Email wajib diisi' : null,
+                              ),
+                              const SizedBox(height: 12),
 
-                            // 3. Input Nama Belakang
-                            _buildInputLabel('Nama Belakang'),
-                            const SizedBox(height: 6),
-                            _buildTextField(
-                              controller: _lastNameController,
-                              hintText: '',
-                            ),
-                            const SizedBox(height: 12),
+                              _buildInputLabel('Nama Depan'),
+                              const SizedBox(height: 6),
+                              _buildTextField(
+                                controller: _firstNameController,
+                                hintText: 'Contoh: Budi',
+                                validator: (val) => val!.isEmpty
+                                    ? 'Nama depan wajib diisi'
+                                    : null,
+                              ),
+                              const SizedBox(height: 12),
 
-                            // 4. Input Password
-                            _buildInputLabel('Password'),
-                            const SizedBox(height: 6),
-                            _buildTextField(
-                              controller: _passwordController,
-                              hintText: '',
-                              obscureText: true,
-                            ),
-                            const SizedBox(height: 12),
+                              _buildInputLabel('Nama Belakang'),
+                              const SizedBox(height: 6),
+                              _buildTextField(
+                                controller: _lastNameController,
+                                hintText: 'Contoh: Santoso',
+                                validator: (val) => val!.isEmpty
+                                    ? 'Nama belakang wajib diisi'
+                                    : null,
+                              ),
+                              const SizedBox(height: 12),
 
-                            // 5. Input Konfirmasi Password
-                            _buildInputLabel('Konfirmasi Password'),
-                            const SizedBox(height: 6),
-                            _buildTextField(
-                              controller: _confirmPasswordController,
-                              hintText: '',
-                              obscureText: true,
-                            ),
-                          ],
+                              _buildInputLabel('Password'),
+                              const SizedBox(height: 6),
+                              _buildTextField(
+                                controller: _passwordController,
+                                hintText: 'Minimal 6 karakter',
+                                obscureText: true,
+                                validator: (val) => val!.length < 6
+                                    ? 'Password min. 6 karakter'
+                                    : null,
+                              ),
+                              const SizedBox(height: 12),
+
+                              _buildInputLabel('Konfirmasi Password'),
+                              const SizedBox(height: 6),
+                              _buildTextField(
+                                controller: _confirmPasswordController,
+                                hintText: 'Ulangi password',
+                                obscureText: true,
+                                validator: (val) {
+                                  if (val!.isEmpty)
+                                    return 'Konfirmasi password wajib diisi';
+                                  if (val != _passwordController.text)
+                                    return 'Password tidak cocok';
+                                  return null;
+                                },
+                              ),
+                            ],
+                          ),
                         ),
                       ),
 
@@ -157,7 +204,9 @@ class _RegisterPageState extends State<RegisterPage> {
                         child: SizedBox(
                           height: 56,
                           child: ElevatedButton(
-                            onPressed: () {},
+                            onPressed: authProvider.isLoading
+                                ? null
+                                : () => _handleRegister(authProvider),
                             style: ElevatedButton.styleFrom(
                               elevation: 0,
                               backgroundColor: AppColors.mint200,
@@ -166,15 +215,18 @@ class _RegisterPageState extends State<RegisterPage> {
                                 borderRadius: BorderRadius.circular(24),
                               ),
                             ),
-                            child: Text(
-                              'Daftar',
-                              style: AppTypography.h6.copyWith(
-                                color: AppColors.mint900,
-                                fontSize: 18,
-                                fontWeight: AppTypography.bold,
-                                height: 1.20,
-                              ),
-                            ),
+                            child: authProvider.isLoading
+                                ? const CircularProgressIndicator(
+                                    color: AppColors.mint900,
+                                  )
+                                : Text(
+                                    'Daftar',
+                                    style: AppTypography.h6.copyWith(
+                                      color: AppColors.mint900,
+                                      fontSize: 18,
+                                      fontWeight: AppTypography.bold,
+                                    ),
+                                  ),
                           ),
                         ),
                       ),
@@ -182,31 +234,26 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
 
                   const SizedBox(height: 16),
-
                   Center(
                     child: GestureDetector(
-                      onTap: () {
-                        Navigator.of(
-                          context,
-                        ).pushReplacementNamed(AppRouter.login);
-                      },
+                      onTap: () => Navigator.of(
+                        context,
+                      ).pushReplacementNamed(AppRouter.login),
                       child: Text.rich(
                         TextSpan(
                           text: 'Sudah punya akun? ',
                           style: AppTypography.body2.copyWith(
                             color: AppColors.dark,
+                            fontSize: 12,
                             fontWeight: AppTypography.medium,
-                            height: 1.33,
-                            letterSpacing: -0.12,
                           ),
                           children: [
                             TextSpan(
                               text: 'Masuk',
                               style: AppTypography.body2.copyWith(
                                 color: AppColors.dark,
+                                fontSize: 12,
                                 fontWeight: AppTypography.bold,
-                                height: 1.33,
-                                letterSpacing: -0.12,
                               ),
                             ),
                           ],
@@ -214,7 +261,6 @@ class _RegisterPageState extends State<RegisterPage> {
                       ),
                     ),
                   ),
-
                   const SizedBox(height: 40),
                 ],
               ),
@@ -233,7 +279,6 @@ class _RegisterPageState extends State<RegisterPage> {
         fontSize: 14,
         fontWeight: AppTypography.bold,
         height: 1.2,
-        letterSpacing: -0.16,
       ),
     );
   }
@@ -243,30 +288,24 @@ class _RegisterPageState extends State<RegisterPage> {
     required String hintText,
     bool obscureText = false,
     TextInputType keyboardType = TextInputType.text,
+    String? Function(String?)? validator,
   }) {
     return TextFormField(
       controller: controller,
       obscureText: obscureText,
       keyboardType: keyboardType,
+      validator: validator,
       style: AppTypography.body1.copyWith(color: AppColors.dark, fontSize: 14),
       decoration: InputDecoration(
         hintText: hintText,
         fillColor: Colors.white,
         filled: true,
-
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(width: 1, color: Color(0xFFD8D3EC)),
+          borderSide: BorderSide.none,
         ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(width: 1, color: Color(0xFFD8D3EC)),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(width: 2, color: AppColors.mint900),
-        ),
+        errorStyle: const TextStyle(color: Color(0xFFFFB4AB), fontSize: 12),
       ),
     );
   }
