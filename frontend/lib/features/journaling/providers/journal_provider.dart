@@ -1,19 +1,16 @@
 // lib/features/journal/providers/journal_provider.dart
-
 import 'package:flutter/material.dart';
 import '../data/journal_api.dart';
 import '../models/detection_result_model.dart';
-// Import SecureStorageService kamu
-import '../../../core/storage/secure_storage_service.dart';
+import '../../../core/network/api_client.dart';
 
 class JournalProvider extends ChangeNotifier {
-  final JournalApi _api = JournalApi();
+  late final JournalApi _api;
 
-  // 1. Deklarasi Storage
-  final SecureStorageService _storage;
-
-  // 2. Konstruktor yang meminta Storage dari main.dart
-  JournalProvider(this._storage);
+  // Konstruktor menerima ApiClient
+  JournalProvider(ApiClient apiClient) {
+    _api = JournalApi(apiClient);
+  }
 
   bool _isLoading = false;
   bool get isLoading => _isLoading;
@@ -24,7 +21,6 @@ class JournalProvider extends ChangeNotifier {
   DetectionResultModel? _resultData;
   DetectionResultModel? get resultData => _resultData;
 
-  // Fungsi yang akan dipanggil oleh Tombol Deteksi di UI
   Future<bool> detectBurnout({
     required String textJurnal,
     required String mood,
@@ -35,21 +31,12 @@ class JournalProvider extends ChangeNotifier {
     required int coffeeIntake,
   }) async {
     _isLoading = true;
-    _errorMessage = null; // Reset error
-    notifyListeners(); // Memunculkan animasi loading di UI
+    _errorMessage = null;
+    notifyListeners();
 
     try {
-      // 3. Mengambil Token dari Secure Storage menggunakan fungsi getToken() kamu
-      final String? token = await _storage.getToken();
-
-      // Jika token tidak ditemukan, tolak prosesnya
-      if (token == null || token.isEmpty) {
-        throw Exception('Sesi telah habis. Silakan login kembali.');
-      }
-
-      // 4. Masukkan token otomatis ke pemanggilan API
+      // Langsung panggil API tanpa mikirin token lagi!
       _resultData = await _api.submitJournalAndDetect(
-        token: token,
         textJurnal: textJurnal,
         mood: mood,
         studyHours: studyHours,
@@ -58,16 +45,14 @@ class JournalProvider extends ChangeNotifier {
         breaksPerDay: breaksPerDay,
         coffeeIntake: coffeeIntake,
       );
-
       _isLoading = false;
       notifyListeners();
-      return true; // Berhasil!
+      return true;
     } catch (e) {
-      // Tangkap error jika gagal
       _errorMessage = e.toString().replaceAll('Exception: ', '');
       _isLoading = false;
-      notifyListeners(); // Sembunyikan loading
-      return false; // Gagal!
+      notifyListeners();
+      return false;
     }
   }
 }

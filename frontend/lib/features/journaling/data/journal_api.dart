@@ -1,13 +1,14 @@
 // lib/features/journal/data/journal_api.dart
-import 'dart:convert';
-import 'package:http/http.dart' as http;
-import '../../../core/constants/api_constants.dart';
+import 'package:dio/dio.dart';
+import '../../../core/network/api_client.dart';
 import '../models/detection_result_model.dart';
 
 class JournalApi {
-  // Ubah tipe kembalian di sini menjadi DetectionResultModel
+  final ApiClient _apiClient;
+
+  JournalApi(this._apiClient);
+
   Future<DetectionResultModel> submitJournalAndDetect({
-    required String token,
     required String textJurnal,
     required String mood,
     required double studyHours,
@@ -16,15 +17,11 @@ class JournalApi {
     required int breaksPerDay,
     required int coffeeIntake,
   }) async {
-    final url = Uri.parse('${ApiConstants.baseUrl}/journal');
     try {
-      final response = await http.post(
-        url,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-        body: jsonEncode({
+      // Menggunakan Dio dari ApiClient. Token SUDAH otomatis masuk lewat Interceptor!
+      final response = await _apiClient.dio.post(
+        '/journal',
+        data: {
           "text_jurnal": textJurnal,
           "mood": mood,
           "pola_hidup": {
@@ -34,29 +31,20 @@ class JournalApi {
             "breaks_per_day": breaksPerDay,
             "coffee_intake_mg": coffeeIntake,
           },
-        }),
+        },
       );
-      final jsonResponse = jsonDecode(response.body);
 
-      if (response.statusCode == 200 && jsonResponse['success'] == true) {
-        return DetectionResultModel.fromJson(jsonResponse['data']);
-      } else {
-        // PERBAIKAN: Tangkap pesan error aslinya agar kita tahu apa yang salah!
-        // Backend Python biasanya menaruh error di key 'message', 'msg', atau 'error'
-        final backendError =
-            jsonResponse['message'] ??
-            jsonResponse['msg'] ??
-            jsonResponse['error'] ??
-            response.body; // Kalau aneh, print semua body-nya
+      // Dio otomatis mengubah JSON menjadi Map, tidak perlu jsonDecode lagi
+      return DetectionResultModel.fromJson(response.data['data']);
+    } on DioException catch (e) {
+      // 👇 TAMBAHKAN 4 BARIS PRINT INI UNTUK MEMBONGKAR PESAN BACKEND 👇
+      print("========================================");
+      print("🚨 ALASAN ERROR 422 DARI BACKEND:");
+      print(e.response?.data);
+      print("========================================");
 
-        // Print ke terminal agar kamu bisa melihatnya
-        print('=== ERROR DARI BACKEND ===');
-        print(backendError);
-
-        throw Exception(backendError.toString());
-      }
-    } catch (e) {
-      throw Exception('Terjadi kesalahan koneksi: $e');
+      // Melempar error ke UI
+      throw _apiClient.handleException(e);
     }
   }
 }

@@ -79,10 +79,11 @@ class DetectionResultPage extends StatelessWidget {
   }
 
   Widget _buildBurnoutRiskCard(Map<String, dynamic> deteksi) {
-    // Penanganan Null Safety
+    // --- PERBAIKAN DI SINI ---
+    // Menggunakan double.tryParse agar aman meskipun backend mengirim format String
     double skor = 0.0;
     if (deteksi['burnout_score'] != null) {
-      skor = (deteksi['burnout_score'] as num).toDouble();
+      skor = double.tryParse(deteksi['burnout_score'].toString()) ?? 0.0;
     }
     double persenLingkaran = skor / 100;
 
@@ -153,7 +154,7 @@ class DetectionResultPage extends StatelessWidget {
                   child: CircularProgressIndicator(
                     value: persenLingkaran,
                     strokeWidth: 14,
-                    backgroundColor: statusColor.withValues(alpha: 0.2),
+                    backgroundColor: statusColor.withOpacity(0.2),
                     color: statusColor,
                     strokeCap: StrokeCap.round,
                   ),
@@ -281,7 +282,7 @@ class DetectionResultPage extends StatelessWidget {
                 child: _buildStatItem(
                   'Jam Fokus',
                   '${lifestyle['study_hours_per_day'] ?? 0}',
-                  'jm',
+                  'jam',
                 ),
               ),
               const SizedBox(width: 8),
@@ -297,7 +298,7 @@ class DetectionResultPage extends StatelessWidget {
                 child: _buildStatItem(
                   'Sosial',
                   '${lifestyle['breaks_per_day'] ?? 0}',
-                  'x',
+                  'jam',
                 ),
               ),
             ],
@@ -314,7 +315,7 @@ class DetectionResultPage extends StatelessWidget {
                 child: _buildStatItem(
                   'Jam Tidur',
                   '${lifestyle['sleep_hours'] ?? 0}',
-                  'jm',
+                  'jam',
                 ),
               ),
               const SizedBox(width: 8),

@@ -29,7 +29,7 @@ void main() {
         ChangeNotifierProvider(create: (_) => AuthProvider(authRepository)),
 
         // 2. PERBAIKI BARIS INI MENJADI LENGKAP
-        ChangeNotifierProvider(create: (_) => JournalProvider(secureStorage)),
+        ChangeNotifierProvider(create: (_) => JournalProvider(apiClient)),
       ],
       child: const MindaraApp(),
     ),

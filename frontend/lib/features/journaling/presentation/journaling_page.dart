@@ -18,11 +18,11 @@ class _JournalingPageState extends State<JournalingPage> {
   int _selectedTabIndex = 0;
   String _selectedMood = '';
 
-  double _jamFokus = 5;
-  int _olahraga = 30;
-  double _sosial = 6;
-  double _jamTidur = 5;
-  int _kafein = 50;
+  double _jamFokus = 0;
+  int _olahraga = 0;
+  double _sosial = 0;
+  double _jamTidur = 0;
+  int _kafein = 0;
   final TextEditingController _jurnalController = TextEditingController();
 
   Future<void> _onDeteksiDitekan() async {
@@ -62,7 +62,6 @@ class _JournalingPageState extends State<JournalingPage> {
 
   @override
   Widget build(BuildContext context) {
-    // PERBAIKAN 3: Pantau loading di dalam fungsi build utama agar aman
     final bool isLoading = context.watch<JournalProvider>().isLoading;
 
     return Scaffold(
@@ -76,7 +75,6 @@ class _JournalingPageState extends State<JournalingPage> {
               child: Column(
                 children: [
                   if (_selectedTabIndex == 0) _buildRefleksiDiriContent(),
-                  // Kirimkan status loading ke dalam Pola Hidup
                   if (_selectedTabIndex == 1) _buildPolaHidupContent(isLoading),
                   const SizedBox(height: 120),
                 ],
@@ -113,8 +111,6 @@ class _JournalingPageState extends State<JournalingPage> {
   Widget _buildTabItem(String title, int index) {
     bool isActive = _selectedTabIndex == index;
     Color indicatorColor = isActive ? AppColors.mint400 : AppColors.mint50;
-
-    // PERBAIKAN 2: Menggunakan .withOpacity agar aman di semua versi Flutter
     Color textColor = isActive ? Colors.white : Colors.white.withOpacity(0.7);
 
     return GestureDetector(
@@ -183,7 +179,7 @@ class _JournalingPageState extends State<JournalingPage> {
               ),
               const SizedBox(height: 4),
               Text(
-                'Augue tincidunt nunc gravida gravida turpis.',
+                'Ceritakan apa saja yang terjadi hari ini.',
                 style: AppTypography.body2.copyWith(
                   color: AppColors.dark,
                   fontSize: 12,
@@ -374,7 +370,7 @@ class _JournalingPageState extends State<JournalingPage> {
               ),
               const SizedBox(height: 4),
               Text(
-                'Augue tincidunt nunc gravida gravida turpis.',
+                'Catat kebiasaan harianmu agar kami bisa menganalisisnya.',
                 style: AppTypography.body2.copyWith(
                   color: AppColors.dark,
                   fontSize: 12,
@@ -403,17 +399,20 @@ class _JournalingPageState extends State<JournalingPage> {
                 ),
               ),
               const SizedBox(height: 16),
+              // --- TAMBAHAN DESKRIPSI DI SINI ---
               _buildSliderItem(
                 label: 'Jam Fokus',
+                description: 'Lama waktu kamu belajar atau bekerja',
                 value: _jamFokus,
                 unit: 'jm',
-                min: 1,
+                min: 0,
                 max: 15,
                 onChanged: (val) => setState(() => _jamFokus = val),
               ),
               const SizedBox(height: 20),
               _buildCounterItem(
                 label: 'Olahraga',
+                description: 'Total menit kamu berolahraga hari ini',
                 value: _olahraga,
                 unit: 'mnt',
                 step: 5,
@@ -425,9 +424,11 @@ class _JournalingPageState extends State<JournalingPage> {
               const SizedBox(height: 20),
               _buildSliderItem(
                 label: 'Sosial',
+                description:
+                    'Waktu yang dihabiskan berinteraksi dengan orang lain',
                 value: _sosial,
                 unit: 'jm',
-                min: 1,
+                min: 0,
                 max: 15,
                 onChanged: (val) => setState(() => _sosial = val),
               ),
@@ -456,17 +457,19 @@ class _JournalingPageState extends State<JournalingPage> {
               const SizedBox(height: 16),
               _buildSliderItem(
                 label: 'Jam Tidur',
+                description: 'Durasi tidurmu tadi malam',
                 value: _jamTidur,
                 unit: 'jm',
-                min: 1,
+                min: 0,
                 max: 15,
                 onChanged: (val) => setState(() => _jamTidur = val),
               ),
               const SizedBox(height: 20),
               _buildCounterItem(
                 label: 'Kafein',
+                description: 'Perkiraan konsumsi kopi/kafein (dalam mg)',
                 value: _kafein,
-                unit: 'ml',
+                unit: 'mg', // Sedikit perbaikan unit dari 'ml' ke 'mg'
                 step: 10,
                 onMinus: () => setState(() {
                   if (_kafein > 0) _kafein -= 10;
@@ -509,49 +512,91 @@ class _JournalingPageState extends State<JournalingPage> {
     );
   }
 
+  // HELPER: SLIDER ITEM
   Widget _buildSliderItem({
     required String label,
+    required String description, // Tambahan parameter
     required double value,
     required String unit,
     required double min,
     required double max,
     required ValueChanged<double> onChanged,
   }) {
+    List<TextSpan> spans = [];
+    int hours = value.toInt();
+    int minutes = ((value - hours) * 60).round();
+
+    spans.add(
+      TextSpan(
+        text: '$hours',
+        style: const TextStyle(
+          color: AppColors.dark,
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+    spans.add(
+      const TextSpan(
+        text: ' jm',
+        style: TextStyle(color: AppColors.lav600, fontSize: 10),
+      ),
+    );
+
+    if (minutes > 0) {
+      spans.add(const TextSpan(text: ' '));
+      spans.add(
+        TextSpan(
+          text: '$minutes',
+          style: const TextStyle(
+            color: AppColors.dark,
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      );
+      spans.add(
+        const TextSpan(
+          text: ' mnt',
+          style: TextStyle(color: AppColors.lav600, fontSize: 10),
+        ),
+      );
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment
+              .start, // Agar sejajar atas jika deskripsi panjang
           children: [
-            Text(
-              label,
-              style: AppTypography.body2.copyWith(
-                color: AppColors.dark,
-                fontWeight: AppTypography.bold,
-                fontSize: 14,
-              ),
-            ),
-            Text.rich(
-              TextSpan(
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  TextSpan(
-                    text: '${value.toInt()}',
-                    style: TextStyle(
+                  Text(
+                    label,
+                    style: AppTypography.body2.copyWith(
                       color: AppColors.dark,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: AppTypography.bold,
+                      fontSize: 14,
                     ),
                   ),
-                  TextSpan(
-                    text: unit,
-                    style: const TextStyle(
-                      color: AppColors.lav600,
-                      fontSize: 10,
+                  const SizedBox(height: 2),
+                  Text(
+                    description,
+                    style: AppTypography.body2.copyWith(
+                      color: Colors
+                          .grey[600], // Warna deskripsi agar terlihat seperti sub-label
+                      fontSize: 11,
                     ),
                   ),
                 ],
               ),
             ),
+            const SizedBox(width: 8),
+            Text.rich(TextSpan(children: spans)),
           ],
         ),
         const SizedBox(height: 8),
@@ -561,11 +606,16 @@ class _JournalingPageState extends State<JournalingPage> {
             activeTrackColor: AppColors.lav50,
             inactiveTrackColor: AppColors.lav50,
             thumbColor: AppColors.mint900,
-            // PERBAIKAN 2: Menggunakan .withOpacity agar aman
             overlayColor: AppColors.mint900.withOpacity(0.2),
             thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 10),
           ),
-          child: Slider(value: value, min: min, max: max, onChanged: onChanged),
+          child: Slider(
+            value: value,
+            min: min,
+            max: max,
+            divisions: ((max - min) * 2).toInt(),
+            onChanged: onChanged,
+          ),
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -587,25 +637,106 @@ class _JournalingPageState extends State<JournalingPage> {
     );
   }
 
+  // HELPER: COUNTER ITEM
   Widget _buildCounterItem({
     required String label,
+    required String description, // Tambahan parameter
     required int value,
     required String unit,
     required int step,
     required VoidCallback onMinus,
     required VoidCallback onPlus,
   }) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          label,
-          style: AppTypography.body2.copyWith(
+    List<TextSpan> spans = [];
+
+    if (unit == 'mnt' && value >= 60) {
+      int hours = value ~/ 60;
+      int mins = value % 60;
+
+      spans.add(
+        TextSpan(
+          text: '$hours',
+          style: const TextStyle(
             color: AppColors.dark,
-            fontWeight: AppTypography.bold,
-            fontSize: 14,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
           ),
         ),
+      );
+      spans.add(
+        const TextSpan(
+          text: ' jm',
+          style: TextStyle(color: AppColors.lav600, fontSize: 12),
+        ),
+      );
+
+      if (mins > 0) {
+        spans.add(const TextSpan(text: ' '));
+        spans.add(
+          TextSpan(
+            text: '$mins',
+            style: const TextStyle(
+              color: AppColors.dark,
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        );
+        spans.add(
+          const TextSpan(
+            text: ' mnt',
+            style: TextStyle(color: AppColors.lav600, fontSize: 12),
+          ),
+        );
+      }
+    } else {
+      spans.add(
+        TextSpan(
+          text: '$value',
+          style: const TextStyle(
+            color: AppColors.dark,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      );
+      spans.add(
+        TextSpan(
+          text: ' $unit',
+          style: const TextStyle(color: AppColors.lav600, fontSize: 12),
+        ),
+      );
+    }
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label,
+                style: AppTypography.body2.copyWith(
+                  color: AppColors.dark,
+                  fontWeight: AppTypography.bold,
+                  fontSize: 14,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                description,
+                style: AppTypography.body2.copyWith(
+                  color: Colors
+                      .grey[600], // Warna deskripsi agar terlihat seperti sub-label
+                  fontSize: 11,
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(width: 8),
         Row(
           children: [
             GestureDetector(
@@ -627,27 +758,9 @@ class _JournalingPageState extends State<JournalingPage> {
             ),
             const SizedBox(width: 16),
             SizedBox(
-              width: 50,
+              width: 85,
               child: Text.rich(
-                TextSpan(
-                  children: [
-                    TextSpan(
-                      text: '$value',
-                      style: TextStyle(
-                        color: AppColors.dark,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    TextSpan(
-                      text: unit,
-                      style: const TextStyle(
-                        color: AppColors.lav600,
-                        fontSize: 12,
-                      ),
-                    ),
-                  ],
-                ),
+                TextSpan(children: spans),
                 textAlign: TextAlign.center,
               ),
             ),
