@@ -60,7 +60,7 @@ class CustomBottomNav extends StatelessWidget {
                     _buildNavItem(
                       icon: Icons.home_filled,
                       label: 'Home',
-                      isActive: currentIndex == 1,
+                      isActive: currentIndex == 0,
                       onTap: () => onTap(1),
                     ),
 
@@ -72,7 +72,7 @@ class CustomBottomNav extends StatelessWidget {
                       child: _buildNavItem(
                         icon: Icons.auto_fix_high,
                         label: 'Jurnaling',
-                        isActive: currentIndex == 0,
+                        isActive: currentIndex == 1,
                         onTap: () => onTap(0),
                       ),
                     ),

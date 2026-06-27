@@ -42,4 +42,20 @@ class AuthRepository {
       await _storageService.deleteToken();
     }
   }
+
+  // Di dalam class AuthRepository
+  Future<UserModel?> getProfile() async {
+    final token = await _storageService.getToken();
+    if (token == null) return null;
+
+    try {
+      // Memanggil API profil (asumsi endpoint ini ada dan mengembalikan data user)
+      final response = await _authApi.getProfile();
+      return UserModel.fromJson(response.data['data']);
+    } catch (e) {
+      // Jika token tidak valid/expired, hapus token
+      await _storageService.deleteToken();
+      return null;
+    }
+  }
 }

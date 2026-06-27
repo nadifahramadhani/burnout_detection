@@ -69,4 +69,23 @@ class AuthProvider extends ChangeNotifier {
     _user = null;
     notifyListeners();
   }
+
+  // Di dalam class AuthProvider
+  // Di dalam class AuthProvider
+  Future<bool> checkAuthStatus() async {
+    _isLoading = true;
+    notifyListeners();
+
+    final user = await _repository.getProfile();
+    if (user != null) {
+      _user = user;
+      _isLoading = false;
+      notifyListeners();
+      return true; // Sesi aktif
+    }
+
+    _isLoading = false;
+    notifyListeners();
+    return false; // Harus login ulang
+  }
 }

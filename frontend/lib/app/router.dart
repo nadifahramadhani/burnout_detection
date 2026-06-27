@@ -17,6 +17,8 @@ class AppRouter {
   static const String login = '/login';
   static const String register = '/register';
   static const String main = '/main';
+  static const String editProfile = '/edit-profile';
+  static const String changePassword = '/change-password';
 
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {

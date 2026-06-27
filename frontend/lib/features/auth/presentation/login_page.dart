@@ -6,6 +6,7 @@ import '../../../app/router.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_typography.dart';
 import '../providers/auth_provider.dart';
+import '../../home/presentation/main_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -27,6 +28,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   // Fungsi untuk mengeksekusi login
+  // Fungsi untuk mengeksekusi login
   void _handleLogin(AuthProvider authProvider) async {
     if (_formKey.currentState!.validate()) {
       final success = await authProvider.login(
@@ -40,10 +42,17 @@ class _LoginPageState extends State<LoginPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Login Berhasil!'),
-            backgroundColor: AppColors.primary,
+            backgroundColor: AppColors.mint900, // Disamakan dengan warna tema
           ),
         );
-        Navigator.of(context).pushReplacementNamed(AppRouter.main);
+
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const MainPage(initialIndex: 0),
+          ),
+          (route) => false,
+        );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

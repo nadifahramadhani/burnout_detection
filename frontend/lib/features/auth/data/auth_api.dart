@@ -48,4 +48,9 @@ class AuthApi {
       throw _apiClient.handleException(e);
     }
   }
+
+  Future<Response> getProfile() async {
+    // Panggil endpoint /profile yang sudah kita buat sebelumnya
+    return await _apiClient.dio.get('/profile');
+  }
 }

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../core/widgets/custom_bottom_nav.dart';
 import '../../journaling/presentation/journaling_page.dart';
 import '../../history/presentation/history_page.dart';
+import '../../profile/presentation/profile_page.dart';
 import 'home_page.dart';
 
 class MainPage extends StatefulWidget {
@@ -18,10 +19,10 @@ class _MainPageState extends State<MainPage> {
   late int _currentIndex;
 
   final List<Widget> _pages = [
-    const JournalingPage(),
     const HomePage(),
+    const JournalingPage(),
     const HistoryPage(),
-    const Center(child: Text('Halaman History Segera Hadir')),
+    const ProfilePage(),
   ];
 
   @override

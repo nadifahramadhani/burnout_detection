@@ -13,6 +13,8 @@ import '../../journaling/providers/journal_provider.dart';
 import '../../history/providers/history_provider.dart';
 import '../../journaling/models/detection_result_model.dart';
 import '../../journaling/presentation/detection_result_page.dart';
+import '../../profile/providers/profile_provider.dart';
+import 'main_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -51,18 +53,13 @@ class _HomePageState extends State<HomePage> {
     return '${today.day} ${months[today.month]} ${today.year}';
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    // Setiap kali user kembali ke tab Home (misal dari hasil deteksi),
-    // data akan di-fetch ulang secara otomatis!
-    context.read<JournalProvider>().fetchJournals();
-    context.read<HistoryProvider>().fetchWeeklyHistory();
-  }
-
   Widget build(BuildContext context) {
     final authProvider = context.watch<AuthProvider>();
-    final String userName = authProvider.user?.firstName ?? 'Nadifah';
+    final profileProvider = context.watch<ProfileProvider>();
+    final String userName =
+        profileProvider.user?.firstName ??
+        authProvider.user?.firstName ??
+        'Nadifah';
     final String currentDate = _getFormattedDate();
 
     return Scaffold(
@@ -112,20 +109,35 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ],
                     ),
-                    Container(
-                      width: 44,
-                      height: 44,
-                      decoration: const BoxDecoration(
-                        color: AppColors.mint200,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Center(
-                        child: Text(
-                          userName.isNotEmpty ? userName[0].toUpperCase() : '?',
-                          style: const TextStyle(
-                            color: AppColors.mint900,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20,
+                    GestureDetector(
+                      onTap: () {
+                        // Membuka MainPage dan langsung melompat ke Tab Profil (Indeks 3)
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                const MainPage(initialIndex: 3),
+                          ),
+                          (route) => false,
+                        );
+                      },
+                      child: Container(
+                        width: 44,
+                        height: 44,
+                        decoration: const BoxDecoration(
+                          color: AppColors.mint200,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Center(
+                          child: Text(
+                            userName.isNotEmpty
+                                ? userName[0].toUpperCase()
+                                : '?',
+                            style: const TextStyle(
+                              color: AppColors.mint900,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
+                            ),
                           ),
                         ),
                       ),
@@ -232,8 +244,15 @@ class _HomePageState extends State<HomePage> {
           .reversed
           .toList();
       for (var item in reversedList) {
-        dates.add(_formatApiDateToShort(item['created_at']));
-        chartData.add(double.tryParse(item['burnout_score'].toString()) ?? 0.0);
+        // PERBAIKAN: Coba ambil dari 'tanggal' dulu, baru 'created_at'
+        dates.add(_formatApiDateToShort(item['tanggal'] ?? item['created_at']));
+
+        // PERBAIKAN: Pastikan burnout_score diparsing dengan benar
+        double skor = 0.0;
+        if (item['burnout_score'] != null) {
+          skor = double.tryParse(item['burnout_score'].toString()) ?? 0.0;
+        }
+        chartData.add(skor);
       }
     } else {
       dates = ['28/5', '29/5', '30/5', '31/5', '1/6', '2/6', '3/6'];
@@ -435,7 +454,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   String _formatApiDateToShort(String? dateStr) {
-    if (dateStr == null) return '';
+    if (dateStr == null || dateStr.isEmpty) return '';
     try {
       final date = DateTime.parse(dateStr);
       return '${date.day}/${date.month}';

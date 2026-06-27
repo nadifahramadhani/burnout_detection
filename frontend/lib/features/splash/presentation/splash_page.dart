@@ -1,10 +1,12 @@
 import 'dart:async';
-
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 
 import '../../../app/router.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_typography.dart';
+import '../../auth/providers/auth_provider.dart';
+import '../../home/presentation/main_page.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
@@ -17,11 +19,31 @@ class _SplashPageState extends State<SplashPage> {
   @override
   void initState() {
     super.initState();
-    Timer(const Duration(seconds: 2), () {
-      if (!mounted) return;
-      // Ubah tujuan dari onboarding menjadi welcome
-      Navigator.of(context).pushReplacementNamed(AppRouter.welcome);
+    // Gunakan postFrameCallback agar context sudah valid
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkSession();
     });
+  }
+
+  void _checkSession() async {
+    // Kita panggil provider tanpa mengandalkan context halaman yang masih inisialisasi
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final isAuthenticated = await authProvider.checkAuthStatus();
+
+    if (!mounted) return;
+
+    if (isAuthenticated) {
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const MainPage(initialIndex: 0),
+        ),
+        (route) => false,
+      );
+    } else {
+      // Pastikan AppRouter.login benar-benar terdaftar
+      Navigator.pushReplacementNamed(context, AppRouter.login);
+    }
   }
 
   @override
