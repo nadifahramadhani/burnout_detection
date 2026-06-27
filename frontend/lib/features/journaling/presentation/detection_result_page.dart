@@ -4,6 +4,7 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_typography.dart';
 // Import model kamu
 import '../models/detection_result_model.dart';
+import '../../home/presentation/main_page.dart';
 
 class DetectionResultPage extends StatelessWidget {
   final DetectionResultModel resultData;
@@ -394,7 +395,11 @@ class DetectionResultPage extends StatelessWidget {
               ),
             ),
             onPressed: () {
-              Navigator.pop(context);
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => const MainPage()),
+                (route) => false, // false artinya hapus semua route sebelumnya
+              );
             },
             child: Text(
               'Kembali ke beranda',
@@ -418,7 +423,14 @@ class DetectionResultPage extends StatelessWidget {
               ),
             ),
             onPressed: () {
-              // Navigasi ke History
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      const MainPage(initialIndex: 2), // 2 = Tab History
+                ),
+                (route) => false,
+              );
             },
             child: Text(
               'Lihat History',

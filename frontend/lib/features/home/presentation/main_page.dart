@@ -2,25 +2,35 @@ import 'package:flutter/material.dart';
 
 import '../../../core/widgets/custom_bottom_nav.dart';
 import '../../journaling/presentation/journaling_page.dart';
+import '../../history/presentation/history_page.dart';
 import 'home_page.dart';
 
 class MainPage extends StatefulWidget {
-  const MainPage({super.key});
+  final int initialIndex; // 1. Tambahkan variabel ini
+
+  const MainPage({super.key, this.initialIndex = 0});
 
   @override
   State<MainPage> createState() => _MainPageState();
 }
 
 class _MainPageState extends State<MainPage> {
-  int _currentIndex = 1; // Default ke Home
+  late int _currentIndex;
 
   final List<Widget> _pages = [
     const JournalingPage(),
     const HomePage(),
+    const HistoryPage(),
     const Center(child: Text('Halaman History Segera Hadir')),
   ];
 
   @override
+  void initState() {
+    super.initState();
+    // 4. Masukkan nilai initialIndex ke _currentIndex saat halaman pertama kali dimuat
+    _currentIndex = widget.initialIndex;
+  }
+
   Widget build(BuildContext context) {
     return Scaffold(
       // Tidak perlu lagi pakai extendBody: true karena kita pakai Stack

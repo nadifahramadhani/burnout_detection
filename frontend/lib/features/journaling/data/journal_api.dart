@@ -47,4 +47,18 @@ class JournalApi {
       throw _apiClient.handleException(e);
     }
   }
+
+  Future<List<dynamic>> getJournals() async {
+    try {
+      // Ambil 5 jurnal terbaru
+      final response = await _apiClient.dio.get('/journal?page=1&per_page=5');
+      return response.data['data'] ?? [];
+    } on DioException catch (e) {
+      // 1. Tangkap khusus error dari server (DioException)
+      throw _apiClient.handleException(e);
+    } catch (e) {
+      // 2. Tangkap error lainnya (misal error parsing data)
+      throw Exception('Terjadi kesalahan: $e');
+    }
+  }
 }

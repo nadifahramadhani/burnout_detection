@@ -20,6 +20,8 @@ class JournalProvider extends ChangeNotifier {
 
   DetectionResultModel? _resultData;
   DetectionResultModel? get resultData => _resultData;
+  List<dynamic> _journals = [];
+  List<dynamic> get journals => _journals;
 
   Future<bool> detectBurnout({
     required String textJurnal,
@@ -53,6 +55,19 @@ class JournalProvider extends ChangeNotifier {
       _isLoading = false;
       notifyListeners();
       return false;
+    }
+  }
+
+  Future<void> fetchJournals() async {
+    _isLoading = true;
+    notifyListeners();
+    try {
+      _journals = await _api.getJournals();
+    } catch (e) {
+      _errorMessage = e.toString();
+    } finally {
+      _isLoading = false;
+      notifyListeners();
     }
   }
 }

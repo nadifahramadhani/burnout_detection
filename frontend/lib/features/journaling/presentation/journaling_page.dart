@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_typography.dart';
 import '../providers/journal_provider.dart';
+import '../../history/providers/history_provider.dart';
 
 import 'detection_result_page.dart';
 
@@ -44,8 +45,12 @@ class _JournalingPageState extends State<JournalingPage> {
       breaksPerDay: _sosial.toInt(),
       coffeeIntake: _kafein,
     );
-
     if (isSuccess && mounted) {
+      // --- TAMBAHAN KODE: Minta provider tarik data terbaru dari database ---
+      context.read<JournalProvider>().fetchJournals();
+      context.read<HistoryProvider>().fetchWeeklyHistory();
+      // ----------------------------------------------------------------------
+
       Navigator.push(
         context,
         MaterialPageRoute(

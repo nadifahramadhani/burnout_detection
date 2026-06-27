@@ -1,77 +1,86 @@
-// lib/features/home/presentation/home_page.dart
+// lib/features/history/presentation/history_page.dart
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_typography.dart';
+import '../../../core/widgets/burnout_bar_chart.dart';
 import '../../../core/widgets/journal_card.dart';
-import '../../../core/widgets/burnout_bar_chart.dart'; // IMPORT WIDGET CHART BARU KITA!
-
-import '../../auth/providers/auth_provider.dart';
-import '../../journaling/providers/journal_provider.dart';
-import '../../history/providers/history_provider.dart';
+import '../providers/history_provider.dart';
 import '../../journaling/models/detection_result_model.dart';
 import '../../journaling/presentation/detection_result_page.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+class HistoryPage extends StatefulWidget {
+  const HistoryPage({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<HistoryPage> createState() => _HistoryPageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HistoryPageState extends State<HistoryPage> {
+  // Untuk filter bulan, default ke bulan saat ini
+  int _selectedMonth = DateTime.now().month;
+  final int _currentYear = DateTime.now().year;
+
+  final List<String> _months = [
+    'Januari',
+    'Februari',
+    'Maret',
+    'April',
+    'Mei',
+    'Juni',
+    'Juli',
+    'Agustus',
+    'September',
+    'Oktober',
+    'November',
+    'Desember',
+  ];
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      // context.read<JournalProvider>().fetchJournals();
-      // context.read<HistoryProvider>().fetchWeeklyHistory();
+      // Tarik data saat halaman dibuka
+      context.read<HistoryProvider>().fetchWeeklyHistory();
     });
   }
 
-  String _getFormattedDate() {
-    final today = DateTime.now();
-    const months = [
-      '',
-      'Januari',
-      'Februari',
-      'Maret',
-      'April',
-      'Mei',
-      'Juni',
-      'Juli',
-      'Agustus',
-      'September',
-      'Oktober',
-      'November',
-      'Desember',
-    ];
-    return '${today.day} ${months[today.month]} ${today.year}';
+  // --- HELPER UNTUK FILTER DATA ---
+  // Fungsi ini akan menyaring historyList yang ada di Provider
+  // agar hanya menampilkan data pada bulan yang dipilih
+  List<dynamic> _getFilteredHistory(List<dynamic> fullHistory) {
+    if (fullHistory.isEmpty) return [];
+
+    return fullHistory.where((item) {
+      final dateStr = item['tanggal'] ?? item['created_at'];
+      if (dateStr == null) return false;
+      try {
+        final date = DateTime.parse(dateStr);
+        return date.month == _selectedMonth && date.year == _currentYear;
+      } catch (e) {
+        return false;
+      }
+    }).toList();
   }
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    // Setiap kali user kembali ke tab Home (misal dari hasil deteksi),
-    // data akan di-fetch ulang secara otomatis!
-    context.read<JournalProvider>().fetchJournals();
-    context.read<HistoryProvider>().fetchWeeklyHistory();
-  }
-
   Widget build(BuildContext context) {
-    final authProvider = context.watch<AuthProvider>();
-    final String userName = authProvider.user?.firstName ?? 'Nadifah';
-    final String currentDate = _getFormattedDate();
+    final historyProvider = context.watch<HistoryProvider>();
+    final fullHistory = historyProvider.historyList;
+    final filteredHistory = _getFilteredHistory(fullHistory);
 
     return Scaffold(
-      backgroundColor: AppColors.secondaryLight,
+      backgroundColor: AppColors.secondaryLight, // Lav-50
       body: CustomScrollView(
         slivers: [
+          // ==========================================
+          // HEADER (HIJAU GELAP)
+          // ==========================================
           SliverAppBar(
             backgroundColor: AppColors.mint900,
-            expandedHeight: 130,
+            expandedHeight: 120,
             pinned: true,
             automaticallyImplyLeading: false,
             shape: const RoundedRectangleBorder(
@@ -82,52 +91,23 @@ class _HomePageState extends State<HomePage> {
             ),
             flexibleSpace: FlexibleSpaceBar(
               background: Container(
-                padding: const EdgeInsets.only(top: 40, left: 24, right: 24),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                padding: const EdgeInsets.only(top: 60, left: 24, right: 24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          currentDate,
-                          style: AppTypography.body2.copyWith(
-                            color: Colors.white.withOpacity(0.8),
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          'Halo, $userName!',
-                          style: AppTypography.h6.copyWith(
-                            color: Colors.white,
-                            fontWeight: AppTypography.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          'Pharetra diam cras',
-                          style: AppTypography.body2.copyWith(
-                            color: Colors.white.withOpacity(0.8),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Container(
-                      width: 44,
-                      height: 44,
-                      decoration: const BoxDecoration(
-                        color: AppColors.mint200,
-                        shape: BoxShape.circle,
+                    Text(
+                      'Riwayat Jurnaling Kamu',
+                      style: AppTypography.h6.copyWith(
+                        color: Colors.white,
+                        fontWeight: AppTypography.bold,
+                        fontSize: 20,
                       ),
-                      child: Center(
-                        child: Text(
-                          userName.isNotEmpty ? userName[0].toUpperCase() : '?',
-                          style: const TextStyle(
-                            color: AppColors.mint900,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20,
-                          ),
-                        ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Pantau terus perkembangan kesehatan mentalmu', // Teks ini diganti agak lebih bermakna
+                      style: AppTypography.body2.copyWith(
+                        color: Colors.white.withOpacity(0.8),
                       ),
                     ),
                   ],
@@ -135,18 +115,34 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
           ),
+
+          // ==========================================
+          // BODY CONTENT
+          // ==========================================
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildMoodPanel(),
+                  // 1. KOTAK FILTER BULAN (Dropdown)
+                  _buildMonthFilter(),
                   const SizedBox(height: 16),
-                  _buildTrendStatusPanel(context),
+
+                  // 2. KOTAK CHART TREN
+                  _buildChartSection(
+                    historyProvider.isLoading,
+                    filteredHistory,
+                  ),
                   const SizedBox(height: 16),
-                  _buildJournalSnippetPanel(context),
-                  const SizedBox(height: 100),
+
+                  // 3. KOTAK LIST JURNAL BULAN INI
+                  _buildHistoryListSection(
+                    historyProvider.isLoading,
+                    filteredHistory,
+                  ),
+
+                  const SizedBox(height: 100), // Spasi aman Bottom Nav
                 ],
               ),
             ),
@@ -156,61 +152,80 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildMoodPanel() {
+  // ==========================================
+  // WIDGETS SECTION
+  // ==========================================
+
+  Widget _buildMonthFilter() {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(24),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            'Mood Kamu Hari Ini',
-            style: AppTypography.h6.copyWith(
-              color: AppColors.dark,
-              fontSize: 16,
-              fontWeight: AppTypography.bold,
-            ),
-          ),
-          const SizedBox(height: 16),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              _buildMoodItem('Senang', const Color(0xFFCAE894)),
-              _buildMoodItem('Biasa Aja', const Color(0xFFF5D87A)),
-              _buildMoodItem('Sedih', const Color(0xFFEA6567)),
-              _buildMoodItem('Marah', const Color(0xFFCAE894)),
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: const BoxDecoration(
+                  color: AppColors.mint50,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.calendar_month,
+                  color: AppColors.mint900,
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Text(
+                'Bulan',
+                style: AppTypography.h6.copyWith(
+                  color: AppColors.dark,
+                  fontSize: 16,
+                  fontWeight: AppTypography.bold,
+                ),
+              ),
             ],
           ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildMoodItem(String label, Color color) {
-    return SizedBox(
-      width: 81,
-      child: Column(
-        children: [
+          // Dropdown Button Untuk Memilih Bulan
           Container(
-            width: 59,
-            height: 59,
-            decoration: ShapeDecoration(
-              color: color,
-              shape: const OvalBorder(),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+            decoration: BoxDecoration(
+              color: AppColors.mint50,
+              borderRadius: BorderRadius.circular(16),
             ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            label,
-            textAlign: TextAlign.center,
-            style: AppTypography.body2.copyWith(
-              color: AppColors.dark,
-              fontSize: 12,
-              fontWeight: AppTypography.bold,
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton<int>(
+                value: _selectedMonth,
+                icon: const Icon(
+                  Icons.keyboard_arrow_down_rounded,
+                  color: AppColors.mint900,
+                ),
+                dropdownColor: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                style: AppTypography.body2.copyWith(
+                  color: AppColors.dark,
+                  fontWeight: AppTypography.bold,
+                ),
+                items: List.generate(12, (index) {
+                  return DropdownMenuItem(
+                    value: index + 1, // Bulan 1 - 12
+                    child: Text('${_months[index]} $_currentYear'),
+                  );
+                }),
+                onChanged: (int? newValue) {
+                  if (newValue != null) {
+                    setState(() {
+                      _selectedMonth = newValue;
+                    });
+                  }
+                },
+              ),
             ),
           ),
         ],
@@ -218,26 +233,27 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildTrendStatusPanel(BuildContext context) {
-    final historyProvider = context.watch<HistoryProvider>();
-    final bool isLoading = historyProvider.isLoading;
-
+  Widget _buildChartSection(bool isLoading, List<dynamic> filteredData) {
+    // Siapkan data untuk Chart
     List<String> dates = [];
-    List<double> chartData = [];
+    List<double> scores = [];
 
-    if (historyProvider.historyList.isNotEmpty) {
-      final reversedList = historyProvider.historyList
-          .take(7)
-          .toList()
-          .reversed
-          .toList();
-      for (var item in reversedList) {
-        dates.add(_formatApiDateToShort(item['created_at']));
-        chartData.add(double.tryParse(item['burnout_score'].toString()) ?? 0.0);
+    if (filteredData.isNotEmpty) {
+      // Ambil 7 hari terakhir dari bulan yang dipilih (dibalik agar urut)
+      final chartList = filteredData.take(7).toList().reversed.toList();
+      for (var item in chartList) {
+        dates.add(_formatDateToDayMonth(item['tanggal'] ?? item['created_at']));
+        scores.add(double.tryParse(item['burnout_score'].toString()) ?? 0.0);
       }
     } else {
-      dates = ['28/5', '29/5', '30/5', '31/5', '1/6', '2/6', '3/6'];
-      chartData = [30.0, 50.0, 25.0, 80.0, 40.0, 60.0, 75.0];
+      // Dummy Jika Kosong (Agar UI tidak rusak/kosong melompong saat didemo)
+      dates = [
+        '1/$_selectedMonth',
+        '5/$_selectedMonth',
+        '10/$_selectedMonth',
+        '15/$_selectedMonth',
+      ];
+      scores = [0, 0, 0, 0];
     }
 
     return Container(
@@ -259,7 +275,6 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           const SizedBox(height: 24),
-
           if (isLoading)
             const SizedBox(
               height: 180,
@@ -271,18 +286,15 @@ class _HomePageState extends State<HomePage> {
             SizedBox(
               height: 180,
               width: double.infinity,
-              // TINGGAL PANGGIL WIDGET YANG BARU KITA BUAT!
-              child: BurnoutBarChart(dates: dates, scores: chartData),
+              // Memanggil Reusable Widget dari Fase Sebelumnya
+              child: BurnoutBarChart(dates: dates, scores: scores),
             ),
         ],
       ),
     );
   }
 
-  Widget _buildJournalSnippetPanel(BuildContext context) {
-    final historyProvider = context.watch<HistoryProvider>();
-    final historyList = historyProvider.historyList.take(2).toList();
-
+  Widget _buildHistoryListSection(bool isLoading, List<dynamic> filteredData) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
@@ -293,43 +305,28 @@ class _HomePageState extends State<HomePage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Cuplikan Jurnal',
-                style: AppTypography.h6.copyWith(
-                  color: AppColors.dark,
-                  fontSize: 16,
-                  fontWeight: AppTypography.bold,
-                ),
-              ),
-              GestureDetector(
-                onTap: () {},
-                child: Text(
-                  'Lihat Semua',
-                  style: AppTypography.body2.copyWith(
-                    color: AppColors.mint900,
-                    fontWeight: AppTypography.bold,
-                  ),
-                ),
-              ),
-            ],
+          Text(
+            'Cuplikan Jurnal',
+            style: AppTypography.h6.copyWith(
+              color: AppColors.dark,
+              fontSize: 16,
+              fontWeight: AppTypography.bold,
+            ),
           ),
           const SizedBox(height: 12),
 
-          if (historyProvider.isLoading)
+          if (isLoading)
             const Center(
               child: Padding(
                 padding: EdgeInsets.all(16),
                 child: CircularProgressIndicator(color: AppColors.mint900),
               ),
             )
-          else if (historyList.isEmpty)
-            const Padding(
-              padding: EdgeInsets.all(16),
+          else if (filteredData.isEmpty)
+            Padding(
+              padding: const EdgeInsets.all(16),
               child: Text(
-                "Kamu belum memiliki jurnal. Yuk catat kondisimu hari ini!",
+                "Tidak ada riwayat jurnal di bulan ${_months[_selectedMonth - 1]} $_currentYear.",
               ),
             )
           else
@@ -337,9 +334,9 @@ class _HomePageState extends State<HomePage> {
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               padding: EdgeInsets.zero,
-              itemCount: historyList.length,
+              itemCount: filteredData.length,
               itemBuilder: (context, index) {
-                final item = historyList[index];
+                final item = filteredData[index];
 
                 String curhatan = item['curhatan'] ?? '';
                 if (curhatan.isEmpty && item['journal'] != null) {
@@ -434,7 +431,8 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  String _formatApiDateToShort(String? dateStr) {
+  // --- FORMATTER HELPER ---
+  String _formatDateToDayMonth(String? dateStr) {
     if (dateStr == null) return '';
     try {
       final date = DateTime.parse(dateStr);
@@ -457,22 +455,9 @@ class _HomePageState extends State<HomePage> {
         'Jum',
         'Sab',
       ][date.weekday % 7];
-      final bulan = [
-        '',
-        'Jan',
-        'Feb',
-        'Mar',
-        'Apr',
-        'Mei',
-        'Jun',
-        'Jul',
-        'Agu',
-        'Sep',
-        'Okt',
-        'Nov',
-        'Des',
-      ][date.month];
-      return '$hari, ${date.day} $bulan ${date.year.toString().substring(2)}';
+      final bulanStr =
+          _months[date.month - 1]; // Menggunakan list lokal agar seragam
+      return '$hari, ${date.day} $bulanStr ${date.year.toString()}'; // Pakai 2026 bukan 26
     } catch (e) {
       return dateStr.split('T')[0];
     }

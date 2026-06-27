@@ -7,6 +7,7 @@ import 'core/storage/secure_storage_service.dart';
 import 'features/auth/data/auth_api.dart';
 import 'features/auth/data/auth_repository.dart';
 import 'features/auth/providers/auth_provider.dart';
+import 'features/history/providers/history_provider.dart';
 
 // 1. TAMBAHKAN IMPORT INI UNTUK JOURNAL PROVIDER
 import 'features/journaling/providers/journal_provider.dart';
@@ -30,6 +31,7 @@ void main() {
 
         // 2. PERBAIKI BARIS INI MENJADI LENGKAP
         ChangeNotifierProvider(create: (_) => JournalProvider(apiClient)),
+        ChangeNotifierProvider(create: (_) => HistoryProvider(apiClient)),
       ],
       child: const MindaraApp(),
     ),

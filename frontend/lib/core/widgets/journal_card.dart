@@ -88,6 +88,7 @@ class JournalCard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 6),
+                  // Cari bagian Container statusText di lib/core/widgets/journal_card.dart
                   Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 10,
@@ -101,11 +102,13 @@ class JournalCard extends StatelessWidget {
                       statusText,
                       style: AppTypography.body2.copyWith(
                         fontSize: 10,
-                        fontWeight: AppTypography.bold,
-                        // Jika warna merah gelap, teks putih. Jika hijau/kuning terang, teks hitam
-                        color: statusColor == AppColors.burnoutHigh
+                        fontWeight: FontWeight.bold,
+                        // LOGIKA WARNA TEKS: Gunakan putih jika statusColor gelap, hitam jika terang
+                        color:
+                            (statusColor == AppColors.burnoutHigh ||
+                                statusColor == AppColors.burnoutCritical)
                             ? Colors.white
-                            : const Color(0xFF604B08),
+                            : AppColors.dark,
                       ),
                     ),
                   ),
@@ -115,14 +118,9 @@ class JournalCard extends StatelessWidget {
           ),
           const SizedBox(height: 12),
 
-          // TEKS KONTEN JURNAL
-          Text(
-            '“$content”',
-            style: AppTypography.body2.copyWith(
-              color: AppColors.lav900,
-              fontSize: 12,
-            ),
-          ),
+          // TEKS KONTEN JURNAL (Sekarang menggunakan Expandable Widget)
+          ExpandableJournalText(text: content),
+
           const SizedBox(height: 16),
 
           // BOX STATISTIK (Bisa digeser horizontal jika layar HP terlalu kecil)
@@ -136,7 +134,11 @@ class JournalCard extends StatelessWidget {
                 const SizedBox(width: 8),
                 _buildStatBox('Jam Fokus', focusValue, 'jm'),
                 const SizedBox(width: 8),
-                _buildStatBox('Sosial', socialValue, 'jm'),
+                _buildStatBox(
+                  'Sosial',
+                  socialValue,
+                  'x',
+                ), // Diubah ke 'x' (frekuensi istirahat) sesuai diskusi sebelumnya
                 const SizedBox(width: 8),
                 _buildStatBox('Kafein', caffeineValue, 'mg'),
               ],
@@ -187,6 +189,75 @@ class JournalCard extends StatelessWidget {
             ],
           ),
         ],
+      ),
+    );
+  }
+}
+
+// ==========================================
+// WIDGET BARU: Teks Jurnal yang Bisa Buka-Tutup
+// ==========================================
+class ExpandableJournalText extends StatefulWidget {
+  final String text;
+
+  const ExpandableJournalText({super.key, required this.text});
+
+  @override
+  State<ExpandableJournalText> createState() => _ExpandableJournalTextState();
+}
+
+class _ExpandableJournalTextState extends State<ExpandableJournalText> {
+  bool isExpanded = false;
+
+  @override
+  Widget build(BuildContext context) {
+    // Batas jumlah karakter sebelum dipotong
+    const int maxLength = 90;
+    final String fullText = widget.text;
+
+    // Jika teksnya memang sudah pendek, tampilkan biasa tanpa tombol
+    if (fullText.length <= maxLength) {
+      return Text(
+        '“$fullText”',
+        style: AppTypography.body2.copyWith(
+          color: AppColors.lav900,
+          fontSize: 12,
+        ),
+      );
+    }
+
+    // Teks yang akan ditampilkan berdasarkan status isExpanded
+    final String displayText = isExpanded
+        ? fullText
+        : '${fullText.substring(0, maxLength)}...';
+
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          isExpanded = !isExpanded;
+        });
+      },
+      child: Text.rich(
+        TextSpan(
+          children: [
+            TextSpan(
+              text: '“$displayText” ',
+              style: AppTypography.body2.copyWith(
+                color: AppColors.lav900,
+                fontSize: 12,
+              ),
+            ),
+            TextSpan(
+              text: isExpanded ? 'Tutup' : 'Selengkapnya',
+              style: AppTypography.body2.copyWith(
+                color: AppColors
+                    .mint900, // Warna hijau mint agar terlihat bisa diklik
+                fontSize: 11,
+                fontWeight: AppTypography.bold,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
