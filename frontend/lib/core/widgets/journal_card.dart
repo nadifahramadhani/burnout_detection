@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../constants/app_colors.dart';
 import '../constants/app_typography.dart';
+import '../constants/app_moods.dart';
 
 class JournalCard extends StatelessWidget {
   final String date;
@@ -33,6 +34,7 @@ class JournalCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final moodData = AppMoods.getMood(moodLabel);
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
@@ -57,11 +59,16 @@ class JournalCard extends StatelessWidget {
                     Container(
                       width: 28,
                       height: 28,
-                      decoration: const BoxDecoration(
+                      padding: const EdgeInsets.all(
+                        4,
+                      ), // Beri jarak agar gambar tidak mentok
+                      decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: AppColors.mint200, // Warna dummy
+                        color: moodData.color, // Gunakan warna dinamis
                       ),
-                      // child: Icon(Icons.emoji_emotions, size: 16), // Tambahkan icon asli nanti
+                      child: Image.asset(
+                        moodData.imagePath,
+                      ), // Munculkan gambar karakternya
                     ),
                     const SizedBox(width: 8),
                     Text(

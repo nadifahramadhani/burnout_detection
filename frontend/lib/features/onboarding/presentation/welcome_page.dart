@@ -15,8 +15,8 @@ class WelcomePage extends StatelessWidget {
       body: Stack(
         children: [
           Positioned.fill(
-            child: SvgPicture.asset(
-              'assets/images/welcome.svg',
+            child: Image.asset(
+              'assets/images/welcome.png',
               fit: BoxFit.cover,
               alignment: Alignment.topLeft,
             ),

@@ -41,8 +41,7 @@ class _SplashPageState extends State<SplashPage> {
         (route) => false,
       );
     } else {
-      // Pastikan AppRouter.login benar-benar terdaftar
-      Navigator.pushReplacementNamed(context, AppRouter.login);
+      Navigator.pushReplacementNamed(context, AppRouter.welcome);
     }
   }
 

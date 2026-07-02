@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_typography.dart';
-// Import model kamu
+import '../../../core/constants/app_moods.dart';
 import '../models/detection_result_model.dart';
 import '../../home/presentation/main_page.dart';
 
@@ -191,6 +191,10 @@ class DetectionResultPage extends StatelessWidget {
   }
 
   Widget _buildFeltMoodCard(Map<String, dynamic> journal) {
+    // 1. AMBIL TEKS DARI BACKEND, LALU UBAH JADI OBJEK MOOD
+    final moodLabel = journal['mood'] ?? 'Biasa Aja';
+    final moodData = AppMoods.getMood(moodLabel);
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),
@@ -214,17 +218,21 @@ class DetectionResultPage extends StatelessWidget {
               ),
               Row(
                 children: [
+                  // 2. UBAH CONTAINER KOSONG MENJADI GAMBAR MOOD
                   Container(
-                    width: 24,
-                    height: 24,
-                    decoration: const BoxDecoration(
-                      color: AppColors.burnoutHigh,
+                    width:
+                        32, // Dibesarkan sedikit dari 24 ke 32 agar gambarnya terlihat
+                    height: 32,
+                    padding: const EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      color: moodData.color, // Warna dinamis
                       shape: BoxShape.circle,
                     ),
+                    child: Image.asset(moodData.imagePath), // Gambar karakter
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    journal['mood'] ?? 'Sedih',
+                    moodData.label, // Teks yang rapi dari AppMoods
                     style: AppTypography.body2.copyWith(
                       color: AppColors.dark,
                       fontWeight: AppTypography.bold,

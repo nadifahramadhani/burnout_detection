@@ -5,6 +5,8 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_typography.dart';
 import '../providers/journal_provider.dart';
 import '../../history/providers/history_provider.dart';
+import '../../../core/constants/app_moods.dart';
+import '../../../core/widgets/mood_item_widget.dart';
 
 import 'detection_result_page.dart';
 
@@ -258,33 +260,21 @@ class _JournalingPageState extends State<JournalingPage> {
               ),
               const SizedBox(height: 16),
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: _buildSelectableMood(
-                      'Senang',
-                      const Color(0xFFCAE894),
-                    ),
-                  ),
-                  Expanded(
-                    child: _buildSelectableMood(
-                      'Biasa Aja',
-                      const Color(0xFFF5D87A),
-                    ),
-                  ),
-                  Expanded(
-                    child: _buildSelectableMood(
-                      'Sedih',
-                      const Color(0xFFEA6567),
-                    ),
-                  ),
-                  Expanded(
-                    child: _buildSelectableMood(
-                      'Marah',
-                      const Color(0xFFD14040),
-                    ),
-                  ),
-                ],
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                // Looping otomatis dari AppMoods
+                children: AppMoods.allMoods.map((mood) {
+                  return MoodItemWidget(
+                    mood: mood,
+                    isSelected:
+                        _selectedMood ==
+                        mood.label, // Cek apakah mood ini sedang diklik
+                    onTap: () {
+                      setState(() {
+                        _selectedMood = mood.label; // Simpan pilihan user
+                      });
+                    },
+                  );
+                }).toList(),
               ),
               const SizedBox(height: 24),
               SizedBox(
@@ -316,41 +306,41 @@ class _JournalingPageState extends State<JournalingPage> {
     );
   }
 
-  Widget _buildSelectableMood(String label, Color color) {
-    bool isSelected = _selectedMood == label;
-    return GestureDetector(
-      onTap: () => setState(() => _selectedMood = label),
-      behavior: HitTestBehavior.opaque,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 52,
-            height: 52,
-            decoration: BoxDecoration(
-              color: color,
-              shape: BoxShape.circle,
-              border: isSelected
-                  ? Border.all(color: AppColors.mint900, width: 3)
-                  : null,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            label,
-            textAlign: TextAlign.center,
-            style: AppTypography.body2.copyWith(
-              color: AppColors.dark,
-              fontSize: 11,
-              fontWeight: isSelected ? AppTypography.bold : FontWeight.w500,
-            ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ],
-      ),
-    );
-  }
+  // Widget _buildSelectableMood(String label, Color color) {
+  //   bool isSelected = _selectedMood == label;
+  //   return GestureDetector(
+  //     onTap: () => setState(() => _selectedMood = label),
+  //     behavior: HitTestBehavior.opaque,
+  //     child: Column(
+  //       mainAxisSize: MainAxisSize.min,
+  //       children: [
+  //         Container(
+  //           width: 52,
+  //           height: 52,
+  //           decoration: BoxDecoration(
+  //             color: color,
+  //             shape: BoxShape.circle,
+  //             border: isSelected
+  //                 ? Border.all(color: AppColors.mint900, width: 3)
+  //                 : null,
+  //           ),
+  //         ),
+  //         const SizedBox(height: 8),
+  //         Text(
+  //           label,
+  //           textAlign: TextAlign.center,
+  //           style: AppTypography.body2.copyWith(
+  //             color: AppColors.dark,
+  //             fontSize: 11,
+  //             fontWeight: isSelected ? AppTypography.bold : FontWeight.w500,
+  //           ),
+  //           maxLines: 1,
+  //           overflow: TextOverflow.ellipsis,
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   Widget _buildPolaHidupContent(bool isLoading) {
     return Column(

@@ -34,21 +34,21 @@ class _OnboardingPageState extends State<OnboardingPage> {
   final List<OnboardingData> _pages = [
     OnboardingData(
       backgroundColor: const Color(0xFFB298E7),
-      imagePath: 'assets/images/onboarding_1.svg',
+      imagePath: 'assets/images/onboarding_1.png',
       title: 'Mulai Harimu Tanpa Beban',
       description:
           'Kenali dirimu lebih dekat melalui jurnal singkat. Cukup luangkan beberapa menit sehari untuk mencatat apa yang kamu rasakan dan pikirkan hari ini.',
     ),
     OnboardingData(
       backgroundColor: const Color(0xFFD1F58C),
-      imagePath: 'assets/images/onboarding_2.svg',
+      imagePath: 'assets/images/onboarding_2.png',
       title: 'Lelah dan Penat Itu Wajar',
       description:
           'Merasa kewalahan dengan padatnya aktivitas? Pantau terus pola tidur, suasana hati, dan kebiasaan harianmu agar tahu kapan tubuh butuh jeda.',
     ),
     OnboardingData(
       backgroundColor: const Color(0xFF5A4AA2),
-      imagePath: 'assets/images/onboarding_3.svg',
+      imagePath: 'assets/images/onboarding_3.png',
       title: 'Cegah Burnout Lebih Awal',
       description:
           'Jangan tunggu sampai benar-benar kehabisan energi. Mindara akan membantumu mengenali tanda-tanda kelelahan mental sejak dini agar kamu bisa kembali pulih.',
@@ -115,11 +115,30 @@ class _OnboardingPageState extends State<OnboardingPage> {
                     ),
                     Expanded(
                       child: Padding(
-                        padding: const EdgeInsets.only(bottom: 280),
-                        child: SvgPicture.asset(
-                          data.imagePath,
-                          fit: BoxFit.contain,
+                        // 1. Tambahkan left dan right di sini untuk "menjepit" gambar.
+                        // Ubah angka 40 ini sesuai selera (makin besar angkanya, gambarnya makin kecil).
+                        // bottom: 200 (atau 240) biarkan agar gambarnya punya jarak ke teks bawah.
+                        padding: const EdgeInsets.only(
+                          bottom: 200,
+                          left: 40,
+                          right: 40,
                         ),
+                        child: index == 1
+                            // PERLAKUAN KHUSUS HALAMAN 2 (DIGESER)
+                            ? Transform.translate(
+                                offset: const Offset(20, 0), // Atur pergeseran
+                                child: Image.asset(
+                                  data.imagePath,
+                                  fit: BoxFit.contain, // Pastikan tetap contain
+                                  width: double.infinity,
+                                ),
+                              )
+                            // HALAMAN 1 & 3 TETAP NORMAL
+                            : Image.asset(
+                                data.imagePath,
+                                fit: BoxFit.contain, // Pastikan tetap contain
+                                width: double.infinity,
+                              ),
                       ),
                     ),
                   ],

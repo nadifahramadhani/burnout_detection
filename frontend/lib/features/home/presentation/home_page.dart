@@ -14,6 +14,8 @@ import '../../history/providers/history_provider.dart';
 import '../../journaling/models/detection_result_model.dart';
 import '../../journaling/presentation/detection_result_page.dart';
 import '../../profile/providers/profile_provider.dart';
+import '../../../core/constants/app_moods.dart';
+import '../../../core/widgets/mood_item_widget.dart';
 import 'main_page.dart';
 
 class HomePage extends StatefulWidget {
@@ -190,40 +192,10 @@ class _HomePageState extends State<HomePage> {
           const SizedBox(height: 16),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              _buildMoodItem('Senang', const Color(0xFFCAE894)),
-              _buildMoodItem('Biasa Aja', const Color(0xFFF5D87A)),
-              _buildMoodItem('Sedih', const Color(0xFFEA6567)),
-              _buildMoodItem('Marah', const Color(0xFFCAE894)),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildMoodItem(String label, Color color) {
-    return SizedBox(
-      width: 81,
-      child: Column(
-        children: [
-          Container(
-            width: 59,
-            height: 59,
-            decoration: ShapeDecoration(
-              color: color,
-              shape: const OvalBorder(),
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            label,
-            textAlign: TextAlign.center,
-            style: AppTypography.body2.copyWith(
-              color: AppColors.dark,
-              fontSize: 12,
-              fontWeight: AppTypography.bold,
-            ),
+            children: AppMoods.allMoods.map((mood) {
+              // Di halaman Home, kita hanya menampilkan (tanpa bisa diklik)
+              return MoodItemWidget(mood: mood);
+            }).toList(),
           ),
         ],
       ),

@@ -61,7 +61,7 @@ class CustomBottomNav extends StatelessWidget {
                       icon: Icons.home_filled,
                       label: 'Home',
                       isActive: currentIndex == 0,
-                      onTap: () => onTap(1),
+                      onTap: () => onTap(0),
                     ),
 
                     // Tombol Tengah (Jurnaling)
@@ -73,7 +73,7 @@ class CustomBottomNav extends StatelessWidget {
                         icon: Icons.auto_fix_high,
                         label: 'Jurnaling',
                         isActive: currentIndex == 1,
-                        onTap: () => onTap(0),
+                        onTap: () => onTap(1),
                       ),
                     ),
 
