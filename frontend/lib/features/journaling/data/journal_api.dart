@@ -18,7 +18,6 @@ class JournalApi {
     required int coffeeIntake,
   }) async {
     try {
-      // Menggunakan Dio dari ApiClient. Token SUDAH otomatis masuk lewat Interceptor!
       final response = await _apiClient.dio.post(
         '/journal',
         data: {

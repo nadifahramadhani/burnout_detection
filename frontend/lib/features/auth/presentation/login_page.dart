@@ -42,7 +42,7 @@ class _LoginPageState extends State<LoginPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Login Berhasil!'),
-            backgroundColor: AppColors.mint900, // Disamakan dengan warna tema
+            backgroundColor: AppColors.mint900,
           ),
         );
 

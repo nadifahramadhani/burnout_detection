@@ -48,10 +48,8 @@ class _JournalingPageState extends State<JournalingPage> {
       coffeeIntake: _kafein,
     );
     if (isSuccess && mounted) {
-      // --- TAMBAHAN KODE: Minta provider tarik data terbaru dari database ---
       context.read<JournalProvider>().fetchJournals();
       context.read<HistoryProvider>().fetchWeeklyHistory();
-      // ----------------------------------------------------------------------
 
       Navigator.push(
         context,

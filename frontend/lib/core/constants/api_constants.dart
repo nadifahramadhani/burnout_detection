@@ -1,7 +1,5 @@
 class ApiConstants {
-  // Ganti dengan IP laptop kamu saat test di HP fisik
-  // Untuk emulator Android: 10.0.2.2
-  // Untuk HP fisik: IP laptop (cek dengan ipconfig)
+
   static const String baseUrl = 'http://10.0.2.2:5000/api';
 
   // Auth
