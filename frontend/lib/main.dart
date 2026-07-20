@@ -11,7 +11,6 @@ import 'features/history/providers/history_provider.dart';
 import 'features/journaling/providers/journal_provider.dart';
 import 'features/profile/providers/profile_provider.dart';
 
-// 1. TAMBAHKAN IMPORT HALAMAN EDIT PROFILE DI SINI
 import 'features/profile/presentation/edit_profile_page.dart';
 import 'features/profile/presentation/change_password_page.dart';
 import 'features/auth/presentation/login_page.dart';
@@ -19,16 +18,14 @@ import 'features/auth/presentation/login_page.dart';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // 1. Inisialisasi Core Services (Mesin Utama)
   final apiClient = ApiClient();
   final secureStorage = SecureStorageService();
 
-  // 2. Inisialisasi API & Repository
   final authApi = AuthApi(apiClient);
   final authRepository = AuthRepository(authApi, secureStorage);
 
   runApp(
-    // 3. Pasang Provider di urutan terluar aplikasi
+
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider(authRepository)),
@@ -50,8 +47,8 @@ class MindaraApp extends StatelessWidget {
       title: 'Mindara',
       debugShowCheckedModeBanner: false,
       initialRoute:
-          AppRouter.splash, // Pastikan splash screen menjadi route awal
-      // 2. PERBAIKAN: BUNGKUS DENGAN PARAMETER routes: {}
+          AppRouter.splash,
+
       routes: {
         AppRouter.login: (context) => const LoginPage(),
         AppRouter.editProfile: (context) => const EditProfilePage(),

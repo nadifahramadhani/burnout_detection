@@ -50,7 +50,7 @@ class AuthApi {
   }
 
   Future<Response> getProfile() async {
-    // Panggil endpoint /profile yang sudah kita buat sebelumnya
+
     return await _apiClient.dio.get('/profile');
   }
 }

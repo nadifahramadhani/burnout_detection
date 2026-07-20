@@ -1,4 +1,4 @@
-// lib/features/history/presentation/history_page.dart
+
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -19,7 +19,7 @@ class HistoryPage extends StatefulWidget {
 }
 
 class _HistoryPageState extends State<HistoryPage> {
-  // Untuk filter bulan, default ke bulan saat ini
+
   int _selectedMonth = DateTime.now().month;
   final int _currentYear = DateTime.now().year;
 
@@ -42,14 +42,11 @@ class _HistoryPageState extends State<HistoryPage> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      // Tarik data saat halaman dibuka
+
       context.read<HistoryProvider>().fetchWeeklyHistory();
     });
   }
 
-  // --- HELPER UNTUK FILTER DATA ---
-  // Fungsi ini akan menyaring historyList yang ada di Provider
-  // agar hanya menampilkan data pada bulan yang dipilih
   List<dynamic> _getFilteredHistory(List<dynamic> fullHistory) {
     if (fullHistory.isEmpty) return [];
 
@@ -72,12 +69,10 @@ class _HistoryPageState extends State<HistoryPage> {
     final filteredHistory = _getFilteredHistory(fullHistory);
 
     return Scaffold(
-      backgroundColor: AppColors.secondaryLight, // Lav-50
+      backgroundColor: AppColors.secondaryLight,
       body: CustomScrollView(
         slivers: [
-          // ==========================================
-          // HEADER (HIJAU GELAP)
-          // ==========================================
+
           SliverAppBar(
             backgroundColor: AppColors.mint900,
             expandedHeight: 120,
@@ -105,7 +100,7 @@ class _HistoryPageState extends State<HistoryPage> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'Pantau terus perkembangan kesehatan mentalmu', // Teks ini diganti agak lebih bermakna
+                      'Pantau terus perkembangan kesehatan mentalmu',
                       style: AppTypography.body2.copyWith(
                         color: Colors.white.withOpacity(0.8),
                       ),
@@ -116,33 +111,28 @@ class _HistoryPageState extends State<HistoryPage> {
             ),
           ),
 
-          // ==========================================
-          // BODY CONTENT
-          // ==========================================
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // 1. KOTAK FILTER BULAN (Dropdown)
+
                   _buildMonthFilter(),
                   const SizedBox(height: 16),
 
-                  // 2. KOTAK CHART TREN
                   _buildChartSection(
                     historyProvider.isLoading,
                     filteredHistory,
                   ),
                   const SizedBox(height: 16),
 
-                  // 3. KOTAK LIST JURNAL BULAN INI
                   _buildHistoryListSection(
                     historyProvider.isLoading,
                     filteredHistory,
                   ),
 
-                  const SizedBox(height: 100), // Spasi aman Bottom Nav
+                  const SizedBox(height: 100),
                 ],
               ),
             ),
@@ -151,10 +141,6 @@ class _HistoryPageState extends State<HistoryPage> {
       ),
     );
   }
-
-  // ==========================================
-  // WIDGETS SECTION
-  // ==========================================
 
   Widget _buildMonthFilter() {
     return Container(
@@ -192,7 +178,7 @@ class _HistoryPageState extends State<HistoryPage> {
               ),
             ],
           ),
-          // Dropdown Button Untuk Memilih Bulan
+
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
             decoration: BoxDecoration(
@@ -214,7 +200,7 @@ class _HistoryPageState extends State<HistoryPage> {
                 ),
                 items: List.generate(12, (index) {
                   return DropdownMenuItem(
-                    value: index + 1, // Bulan 1 - 12
+                    value: index + 1,
                     child: Text('${_months[index]} $_currentYear'),
                   );
                 }),
@@ -234,19 +220,19 @@ class _HistoryPageState extends State<HistoryPage> {
   }
 
   Widget _buildChartSection(bool isLoading, List<dynamic> filteredData) {
-    // Siapkan data untuk Chart
+
     List<String> dates = [];
     List<double> scores = [];
 
     if (filteredData.isNotEmpty) {
-      // Ambil 7 hari terakhir dari bulan yang dipilih (dibalik agar urut)
+
       final chartList = filteredData.take(7).toList().reversed.toList();
       for (var item in chartList) {
         dates.add(_formatDateToDayMonth(item['tanggal'] ?? item['created_at']));
         scores.add(double.tryParse(item['burnout_score'].toString()) ?? 0.0);
       }
     } else {
-      // Dummy Jika Kosong (Agar UI tidak rusak/kosong melompong saat didemo)
+
       dates = [
         '1/$_selectedMonth',
         '5/$_selectedMonth',
@@ -286,7 +272,7 @@ class _HistoryPageState extends State<HistoryPage> {
             SizedBox(
               height: 180,
               width: double.infinity,
-              // Memanggil Reusable Widget dari Fase Sebelumnya
+
               child: BurnoutBarChart(dates: dates, scores: scores),
             ),
         ],
@@ -364,7 +350,7 @@ class _HistoryPageState extends State<HistoryPage> {
                   padding: const EdgeInsets.only(bottom: 16),
                   child: GestureDetector(
                     onTap: () {
-                      // 1. Bungkus ulang data API agar sesuai dengan format DetectionResultModel
+
                       final mappedData = {
                         "journal": {
                           "text_jurnal": curhatan,
@@ -373,7 +359,7 @@ class _HistoryPageState extends State<HistoryPage> {
                         "hasil_deteksi": {
                           "burnout_level": level,
                           "burnout_score": skor,
-                          // Handle perbedaan nama key antara API History dan Detection
+
                           "prob_normal":
                               item['prob_normal'] ??
                               item['probabilitas']?['normal'] ??
@@ -394,12 +380,10 @@ class _HistoryPageState extends State<HistoryPage> {
                         "lifestyle": lifestyle ?? {},
                       };
 
-                      // 2. Ubah menjadi Model
                       final resultModel = DetectionResultModel.fromJson(
                         mappedData,
                       );
 
-                      // 3. Navigasi ke halaman detail
                       Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -431,7 +415,6 @@ class _HistoryPageState extends State<HistoryPage> {
     );
   }
 
-  // --- FORMATTER HELPER ---
   String _formatDateToDayMonth(String? dateStr) {
     if (dateStr == null) return '';
     try {
@@ -456,8 +439,8 @@ class _HistoryPageState extends State<HistoryPage> {
         'Sab',
       ][date.weekday % 7];
       final bulanStr =
-          _months[date.month - 1]; // Menggunakan list lokal agar seragam
-      return '$hari, ${date.day} $bulanStr ${date.year.toString()}'; // Pakai 2026 bukan 26
+          _months[date.month - 1];
+      return '$hari, ${date.day} $bulanStr ${date.year.toString()}';
     } catch (e) {
       return dateStr.split('T')[0];
     }

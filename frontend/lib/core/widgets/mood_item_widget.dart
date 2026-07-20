@@ -5,7 +5,7 @@ import '../constants/app_moods.dart';
 class MoodItemWidget extends StatelessWidget {
   final MoodData mood;
   final bool isSelected;
-  final VoidCallback? onTap; // Untuk interaksi jika bisa diklik
+  final VoidCallback? onTap;
 
   const MoodItemWidget({
     super.key,
@@ -21,7 +21,7 @@ class MoodItemWidget extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Lingkaran background + Karakter
+
           Container(
             width: 56,
             height: 56,
@@ -33,14 +33,13 @@ class MoodItemWidget extends StatelessWidget {
                   ? Border.all(
                       color: Colors.black45,
                       width: 2,
-                    ) // Indikator jika dipilih
+                    )
                   : null,
             ),
             child: Image.asset(mood.imagePath, fit: BoxFit.contain),
           ),
           const SizedBox(height: 8),
 
-          // Label teks
           Text(
             mood.label,
             style: AppTypography.body3.copyWith(

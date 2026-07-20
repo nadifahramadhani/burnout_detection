@@ -1,4 +1,4 @@
-// lib/features/journal/presentation/journaling_page.dart
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
@@ -259,16 +259,16 @@ class _JournalingPageState extends State<JournalingPage> {
               const SizedBox(height: 16),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                // Looping otomatis dari AppMoods
+
                 children: AppMoods.allMoods.map((mood) {
                   return MoodItemWidget(
                     mood: mood,
                     isSelected:
                         _selectedMood ==
-                        mood.label, // Cek apakah mood ini sedang diklik
+                        mood.label,
                     onTap: () {
                       setState(() {
-                        _selectedMood = mood.label; // Simpan pilihan user
+                        _selectedMood = mood.label;
                       });
                     },
                   );
@@ -303,42 +303,6 @@ class _JournalingPageState extends State<JournalingPage> {
       ],
     );
   }
-
-  // Widget _buildSelectableMood(String label, Color color) {
-  //   bool isSelected = _selectedMood == label;
-  //   return GestureDetector(
-  //     onTap: () => setState(() => _selectedMood = label),
-  //     behavior: HitTestBehavior.opaque,
-  //     child: Column(
-  //       mainAxisSize: MainAxisSize.min,
-  //       children: [
-  //         Container(
-  //           width: 52,
-  //           height: 52,
-  //           decoration: BoxDecoration(
-  //             color: color,
-  //             shape: BoxShape.circle,
-  //             border: isSelected
-  //                 ? Border.all(color: AppColors.mint900, width: 3)
-  //                 : null,
-  //           ),
-  //         ),
-  //         const SizedBox(height: 8),
-  //         Text(
-  //           label,
-  //           textAlign: TextAlign.center,
-  //           style: AppTypography.body2.copyWith(
-  //             color: AppColors.dark,
-  //             fontSize: 11,
-  //             fontWeight: isSelected ? AppTypography.bold : FontWeight.w500,
-  //           ),
-  //           maxLines: 1,
-  //           overflow: TextOverflow.ellipsis,
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
 
   Widget _buildPolaHidupContent(bool isLoading) {
     return Column(
@@ -392,7 +356,7 @@ class _JournalingPageState extends State<JournalingPage> {
                 ),
               ),
               const SizedBox(height: 16),
-              // --- TAMBAHAN DESKRIPSI DI SINI ---
+
               _buildSliderItem(
                 label: 'Jam Fokus',
                 description: 'Lama waktu kamu belajar atau bekerja',
@@ -462,7 +426,7 @@ class _JournalingPageState extends State<JournalingPage> {
                 label: 'Kafein',
                 description: 'Perkiraan konsumsi kopi/kafein (dalam mg)',
                 value: _kafein,
-                unit: 'mg', // Sedikit perbaikan unit dari 'ml' ke 'mg'
+                unit: 'mg',
                 step: 10,
                 onMinus: () => setState(() {
                   if (_kafein > 0) _kafein -= 10;
@@ -505,10 +469,9 @@ class _JournalingPageState extends State<JournalingPage> {
     );
   }
 
-  // HELPER: SLIDER ITEM
   Widget _buildSliderItem({
     required String label,
-    required String description, // Tambahan parameter
+    required String description,
     required double value,
     required String unit,
     required double min,
@@ -562,7 +525,7 @@ class _JournalingPageState extends State<JournalingPage> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment
-              .start, // Agar sejajar atas jika deskripsi panjang
+              .start,
           children: [
             Expanded(
               child: Column(
@@ -581,7 +544,7 @@ class _JournalingPageState extends State<JournalingPage> {
                     description,
                     style: AppTypography.body2.copyWith(
                       color: Colors
-                          .grey[600], // Warna deskripsi agar terlihat seperti sub-label
+                          .grey[600],
                       fontSize: 11,
                     ),
                   ),
@@ -630,10 +593,9 @@ class _JournalingPageState extends State<JournalingPage> {
     );
   }
 
-  // HELPER: COUNTER ITEM
   Widget _buildCounterItem({
     required String label,
-    required String description, // Tambahan parameter
+    required String description,
     required int value,
     required String unit,
     required int step,
@@ -722,7 +684,7 @@ class _JournalingPageState extends State<JournalingPage> {
                 description,
                 style: AppTypography.body2.copyWith(
                   color: Colors
-                      .grey[600], // Warna deskripsi agar terlihat seperti sub-label
+                      .grey[600],
                   fontSize: 11,
                 ),
               ),

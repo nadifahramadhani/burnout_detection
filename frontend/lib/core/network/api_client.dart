@@ -12,7 +12,6 @@ class ApiClient {
       connectTimeout: const Duration(seconds: 15),
       receiveTimeout: const Duration(seconds: 15),
     ));
-    
     dio.interceptors.add(AuthInterceptor());
   }
 

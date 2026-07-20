@@ -6,14 +6,12 @@ class AuthInterceptor extends Interceptor {
 
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
-    // Ambil token dari storage
+
     final token = await _storage.getToken();
-    
-    // Jika token ada, masukkan ke header
+
     if (token != null) {
       options.headers['Authorization'] = 'Bearer $token';
     }
-    
     options.headers['Content-Type'] = 'application/json';
     super.onRequest(options, handler);
   }

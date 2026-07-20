@@ -1,4 +1,4 @@
-// lib/features/profile/presentation/edit_profile_page.dart
+
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -21,12 +21,12 @@ class _EditProfilePageState extends State<EditProfilePage> {
   late TextEditingController _firstNameController;
   late TextEditingController _lastNameController;
   late TextEditingController _ageController;
-  String? _selectedGender; // Variabel untuk menyimpan pilihan gender
+  String? _selectedGender;
 
   @override
   void initState() {
     super.initState();
-    // PERBAIKAN: Ambil data dari ProfileProvider (yang bisa di-update)
+
     final profileUser = context.read<ProfileProvider>().user;
     final authUser = context.read<AuthProvider>().user;
     final user = profileUser ?? authUser;
@@ -34,12 +34,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
     _firstNameController = TextEditingController(text: user?.firstName ?? '');
     _lastNameController = TextEditingController(text: user?.lastName ?? '');
 
-    // PERBAIKAN: Masukkan data umur ke dalam input form jika ada
     _ageController = TextEditingController(
       text: user?.age != null ? user!.age.toString() : '',
     );
 
-    // PERBAIKAN: Set gender yang sudah ada ('P' atau 'L')
     _selectedGender = user?.gender;
   }
 
@@ -66,7 +64,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
     final provider = context.read<ProfileProvider>();
 
-    // Kirim semua data termasuk gender ke backend
     final success = await provider.updateProfile(
       firstName: _firstNameController.text.trim(),
       lastName: _lastNameController.text.trim(),
@@ -83,7 +80,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
           backgroundColor: AppColors.mint900,
         ),
       );
-      Navigator.pop(context); // Kembali ke halaman Profile
+      Navigator.pop(context);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -99,12 +96,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
     final provider = context.watch<ProfileProvider>();
 
     return Scaffold(
-      backgroundColor: AppColors.secondaryLight, // Lav-50
+      backgroundColor: AppColors.secondaryLight,
       body: Column(
         children: [
-          // ==========================================
-          // HEADER (HIJAU GELAP - Mint 900)
-          // ==========================================
+
           Container(
             width: double.infinity,
             padding: const EdgeInsets.only(
@@ -166,9 +161,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
             ),
           ),
 
-          // ==========================================
-          // FORM CONTENT
-          // ==========================================
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
@@ -183,7 +175,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // --- FOTO PROFIL (Static) ---
+
                       Center(
                         child: Container(
                           width: 140,
@@ -207,7 +199,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       ),
                       const SizedBox(height: 32),
 
-                      // --- INPUT NAMA DEPAN ---
                       _buildInputField(
                         label: 'Nama Depan',
                         controller: _firstNameController,
@@ -217,7 +208,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       ),
                       const SizedBox(height: 16),
 
-                      // --- INPUT NAMA BELAKANG ---
                       _buildInputField(
                         label: 'Nama Belakang',
                         controller: _lastNameController,
@@ -227,11 +217,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       ),
                       const SizedBox(height: 16),
 
-                      // --- INPUT GENDER (Dropdown) ---
                       _buildGenderDropdown(),
                       const SizedBox(height: 16),
 
-                      // --- INPUT UMUR ---
                       _buildInputField(
                         label: 'Umur (Tahun)',
                         controller: _ageController,
@@ -243,7 +231,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
                       const SizedBox(height: 40),
 
-                      // --- TOMBOL SIMPAN ---
                       SizedBox(
                         width: double.infinity,
                         height: 52,
@@ -286,7 +273,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
     );
   }
 
-  // Helper Widget untuk membuat kotak input estetik
   Widget _buildInputField({
     required String label,
     required TextEditingController controller,
@@ -310,7 +296,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
           validator: validator,
           decoration: InputDecoration(
             filled: true,
-            fillColor: AppColors.secondaryLight, // Lav-50
+            fillColor: AppColors.secondaryLight,
             contentPadding: const EdgeInsets.symmetric(
               horizontal: 16,
               vertical: 14,
@@ -340,7 +326,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
     );
   }
 
-  // Helper Widget untuk membuat Dropdown Gender yang estetik
   Widget _buildGenderDropdown() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

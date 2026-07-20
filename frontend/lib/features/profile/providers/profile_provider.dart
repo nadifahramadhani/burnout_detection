@@ -1,4 +1,4 @@
-// lib/features/profile/providers/profile_provider.dart
+
 
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
@@ -20,7 +20,6 @@ class ProfileProvider extends ChangeNotifier {
   UserModel? _user;
   UserModel? get user => _user;
 
-  // 1. Mengambil data profil dari backend
   Future<void> loadProfile() async {
     _isLoading = true;
     _errorMessage = '';
@@ -42,13 +41,11 @@ class ProfileProvider extends ChangeNotifier {
     }
   }
 
-  // 2. Menyimpan pembaruan profil ke backend
-  // 2. Menyimpan pembaruan profil ke backend
   Future<bool> updateProfile({
     required String firstName,
     required String lastName,
     required int age,
-    required String gender, // <-- TAMBAHKAN INI
+    required String gender,
   }) async {
     _isLoading = true;
     _errorMessage = '';
@@ -61,12 +58,12 @@ class ProfileProvider extends ChangeNotifier {
           "first_name": firstName,
           "last_name": lastName,
           "age": age,
-          "gender": gender, // <-- TAMBAHKAN INI
+          "gender": gender,
         },
       );
 
       if (response.statusCode == 200) {
-        // Tarik data terbaru langsung dari database agar selalu fresh
+
         await loadProfile();
         return true;
       }
@@ -83,8 +80,6 @@ class ProfileProvider extends ChangeNotifier {
     }
   }
 
-  // 3. Menyimpan password baru (Kita siapkan untuk UI selanjutnya)
-  // 3. Menyimpan password baru
   Future<bool> changePassword({
     required String oldPassword,
     required String newPassword,
@@ -96,12 +91,12 @@ class ProfileProvider extends ChangeNotifier {
 
     try {
       final response = await _apiClient.dio.put(
-        '/profile/change-password', // <--- PERBAIKAN 1: Tambahkan /profile di depannya
+        '/profile/change-password',
         data: {
           "old_password": oldPassword,
           "new_password": newPassword,
           "confirm_new_password":
-              confirmPassword, // <--- PERBAIKAN 2: Samakan key dengan backend Python
+              confirmPassword,
         },
       );
 

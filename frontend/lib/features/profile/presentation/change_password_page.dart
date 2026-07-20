@@ -1,4 +1,4 @@
-// lib/features/profile/presentation/change_password_page.dart
+
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -54,7 +54,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
           backgroundColor: AppColors.mint900,
         ),
       );
-      Navigator.pop(context); // Kembali ke halaman profil
+      Navigator.pop(context);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -70,12 +70,10 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
     final provider = context.watch<ProfileProvider>();
 
     return Scaffold(
-      backgroundColor: AppColors.secondaryLight, // Lav-50
+      backgroundColor: AppColors.secondaryLight,
       body: Column(
         children: [
-          // ==========================================
-          // HEADER (HIJAU GELAP - Mint 900)
-          // ==========================================
+
           Container(
             width: double.infinity,
             padding: const EdgeInsets.only(
@@ -137,15 +135,12 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
             ),
           ),
 
-          // ==========================================
-          // BODY CONTENT (Form)
-          // ==========================================
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
               child: Column(
                 children: [
-                  // --- KARTU PUTIH (Judul Halaman) ---
+
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.all(24),
@@ -177,19 +172,18 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                   ),
                   const SizedBox(height: 24),
 
-                  // --- KARTU HIJAU GELAP (Form Input) ---
                   Form(
                     key: _formKey,
                     child: Stack(
                       clipBehavior: Clip.none,
                       alignment: Alignment.bottomCenter,
                       children: [
-                        // Background Hijau Gelap
+
                         Container(
                           width: double.infinity,
                           margin: const EdgeInsets.only(
                             bottom: 26,
-                          ), // Ruang agar tombol bisa menumpuk di bawah
+                          ),
                           padding: const EdgeInsets.only(
                             top: 32,
                             left: 24,
@@ -251,7 +245,6 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                           ),
                         ),
 
-                        // Tombol Simpan (Menumpuk di batas bawah kotak hijau)
                         Positioned(
                           bottom: 0,
                           left: 24,
@@ -261,7 +254,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
                                 backgroundColor:
-                                    AppColors.mint200, // Warna CAE894
+                                    AppColors.mint200,
                                 elevation: 0,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(24),
@@ -302,7 +295,6 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
     );
   }
 
-  // Helper Widget untuk Input Password dengan tombol Show/Hide (Mata)
   Widget _buildPasswordField({
     required String label,
     required TextEditingController controller,
@@ -317,7 +309,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
           label,
           style: AppTypography.body2.copyWith(
             color: Colors
-                .white, // Teks label berwarna putih agar kontras dengan hijau gelap
+                .white,
             fontWeight: AppTypography.bold,
           ),
         ),
@@ -328,10 +320,10 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
           validator: validator,
           style: const TextStyle(
             color: AppColors.dark,
-          ), // Teks ketikan warna gelap
+          ),
           decoration: InputDecoration(
             filled: true,
-            fillColor: Colors.white, // Kotak input berwarna putih
+            fillColor: Colors.white,
             contentPadding: const EdgeInsets.symmetric(
               horizontal: 16,
               vertical: 14,
@@ -345,7 +337,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
             ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
-              borderSide: BorderSide.none, // Tanpa border agar mulus
+              borderSide: BorderSide.none,
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),

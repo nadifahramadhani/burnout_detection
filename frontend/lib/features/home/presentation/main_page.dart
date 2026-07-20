@@ -7,7 +7,7 @@ import '../../profile/presentation/profile_page.dart';
 import 'home_page.dart';
 
 class MainPage extends StatefulWidget {
-  final int initialIndex; // 1. Tambahkan variabel ini
+  final int initialIndex;
 
   const MainPage({super.key, this.initialIndex = 0});
 
@@ -28,21 +28,20 @@ class _MainPageState extends State<MainPage> {
   @override
   void initState() {
     super.initState();
-    // 4. Masukkan nilai initialIndex ke _currentIndex saat halaman pertama kali dimuat
+
     _currentIndex = widget.initialIndex;
   }
 
   Widget build(BuildContext context) {
     return Scaffold(
-      // Tidak perlu lagi pakai extendBody: true karena kita pakai Stack
-      backgroundColor: const Color(0xFFF2EEF9), // AppColors.secondaryLight
-      // Rahasianya ada di Stack ini! Navbar akan menumpuk di atas konten
+
+      backgroundColor: const Color(0xFFF2EEF9),
+
       body: Stack(
         children: [
-          // Lapis 1 (Bawah): KONTEN HALAMAN UTAMA YANG BISA DI-SCROLL
+
           IndexedStack(index: _currentIndex, children: _pages),
 
-          // Lapis 2 (Atas): NAVBAR MENGAMBANG
           Positioned(
             left: 0,
             right: 0,

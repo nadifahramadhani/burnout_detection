@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-// Pastikan path import ini sesuai dengan letak folder constants kamu
+
 import 'app_colors.dart';
 
 class MoodData {
@@ -15,35 +15,35 @@ class MoodData {
 }
 
 class AppMoods {
-  // Gunakan variabel dari AppColors agar terpusat dan konsisten
+
   static const senang = MoodData(
     label: 'Senang',
-    color: AppColors.burnoutLow, // Sama dengan Color(0xFFCAE894)
+    color: AppColors.burnoutLow,
     imagePath: 'assets/images/happy.png',
   );
 
   static const biasaAja = MoodData(
     label: 'Biasa Aja',
-    color: AppColors.burnoutMedium, // Sama dengan Color(0xFFF5D87A)
+    color: AppColors.burnoutMedium,
     imagePath: 'assets/images/flat.png',
   );
 
   static const sedih = MoodData(
     label: 'Sedih',
-    color: AppColors.burnoutHigh, // Sama dengan Color(0xFFE8896A)
+    color: AppColors.burnoutHigh,
     imagePath: 'assets/images/sad.png',
   );
 
   static const marah = MoodData(
     label: 'Marah',
-    color: AppColors.burnoutCritical, // Sama dengan Color(0xFFD14040)
+    color: AppColors.burnoutCritical,
     imagePath: 'assets/images/anggry.png',
   );
 
   static const List<MoodData> allMoods = [senang, biasaAja, sedih, marah];
 
   static MoodData getMood(String? label) {
-    if (label == null) return biasaAja; // Default jika kosong
+    if (label == null) return biasaAja;
 
     switch (label.toLowerCase()) {
       case 'senang':
@@ -55,7 +55,7 @@ class AppMoods {
       case 'marah':
         return marah;
       default:
-        return biasaAja; // Fallback jika teks tidak dikenali
+        return biasaAja;
     }
   }
 }

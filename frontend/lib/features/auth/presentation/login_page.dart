@@ -16,7 +16,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final _formKey = GlobalKey<FormState>(); // Kunci untuk memvalidasi form
+  final _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
@@ -27,8 +27,6 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
-  // Fungsi untuk mengeksekusi login
-  // Fungsi untuk mengeksekusi login
   void _handleLogin(AuthProvider authProvider) async {
     if (_formKey.currentState!.validate()) {
       final success = await authProvider.login(
@@ -131,7 +129,7 @@ class _LoginPageState extends State<LoginPage> {
                           color: AppColors.mint900,
                           borderRadius: BorderRadius.circular(32),
                         ),
-                        //FORM
+
                         child: Form(
                           key: _formKey,
                           child: Column(

@@ -19,14 +19,14 @@ class _SplashPageState extends State<SplashPage> {
   @override
   void initState() {
     super.initState();
-    // Gunakan postFrameCallback agar context sudah valid
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _checkSession();
     });
   }
 
   void _checkSession() async {
-    // Kita panggil provider tanpa mengandalkan context halaman yang masih inisialisasi
+
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     final isAuthenticated = await authProvider.checkAuthStatus();
 

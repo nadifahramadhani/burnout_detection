@@ -1,4 +1,4 @@
-// lib/features/home/presentation/home_page.dart
+
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_typography.dart';
 import '../../../core/widgets/journal_card.dart';
-import '../../../core/widgets/burnout_bar_chart.dart'; // IMPORT WIDGET CHART BARU KITA!
+import '../../../core/widgets/burnout_bar_chart.dart';
 
 import '../../auth/providers/auth_provider.dart';
 import '../../journaling/providers/journal_provider.dart';
@@ -30,8 +30,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      // context.read<JournalProvider>().fetchJournals();
-      // context.read<HistoryProvider>().fetchWeeklyHistory();
+
     });
   }
 
@@ -113,7 +112,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                     GestureDetector(
                       onTap: () {
-                        // Membuka MainPage dan langsung melompat ke Tab Profil (Indeks 3)
+
                         Navigator.pushAndRemoveUntil(
                           context,
                           MaterialPageRoute(
@@ -193,7 +192,7 @@ class _HomePageState extends State<HomePage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: AppMoods.allMoods.map((mood) {
-              // Di halaman Home, kita hanya menampilkan (tanpa bisa diklik)
+
               return MoodItemWidget(mood: mood);
             }).toList(),
           ),
@@ -216,10 +215,9 @@ class _HomePageState extends State<HomePage> {
           .reversed
           .toList();
       for (var item in reversedList) {
-        // PERBAIKAN: Coba ambil dari 'tanggal' dulu, baru 'created_at'
+
         dates.add(_formatApiDateToShort(item['tanggal'] ?? item['created_at']));
 
-        // PERBAIKAN: Pastikan burnout_score diparsing dengan benar
         double skor = 0.0;
         if (item['burnout_score'] != null) {
           skor = double.tryParse(item['burnout_score'].toString()) ?? 0.0;
@@ -262,7 +260,7 @@ class _HomePageState extends State<HomePage> {
             SizedBox(
               height: 180,
               width: double.infinity,
-              // TINGGAL PANGGIL WIDGET YANG BARU KITA BUAT!
+
               child: BurnoutBarChart(dates: dates, scores: chartData),
             ),
         ],
@@ -358,7 +356,7 @@ class _HomePageState extends State<HomePage> {
                   padding: const EdgeInsets.only(bottom: 16),
                   child: GestureDetector(
                     onTap: () {
-                      // 1. Bungkus ulang data API agar sesuai dengan format DetectionResultModel
+
                       final mappedData = {
                         "journal": {
                           "text_jurnal": curhatan,
@@ -367,7 +365,7 @@ class _HomePageState extends State<HomePage> {
                         "hasil_deteksi": {
                           "burnout_level": level,
                           "burnout_score": skor,
-                          // Handle perbedaan nama key antara API History dan Detection
+
                           "prob_normal":
                               item['prob_normal'] ??
                               item['probabilitas']?['normal'] ??
@@ -388,12 +386,10 @@ class _HomePageState extends State<HomePage> {
                         "lifestyle": lifestyle ?? {},
                       };
 
-                      // 2. Ubah menjadi Model
                       final resultModel = DetectionResultModel.fromJson(
                         mappedData,
                       );
 
-                      // 3. Navigasi ke halaman detail
                       Navigator.push(
                         context,
                         MaterialPageRoute(

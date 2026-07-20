@@ -12,10 +12,8 @@ class AuthRepository {
     final response = await _authApi.login(email, password);
     final responseData = response.data['data'];
 
-    // 1. Simpan Token JWT ke penyimpanan aman
     await _storageService.saveToken(responseData['token']);
 
-    // 2. Kembalikan data user
     return UserModel.fromJson(responseData['user']);
   }
 
@@ -43,17 +41,16 @@ class AuthRepository {
     }
   }
 
-  // Di dalam class AuthRepository
   Future<UserModel?> getProfile() async {
     final token = await _storageService.getToken();
     if (token == null) return null;
 
     try {
-      // Memanggil API profil (asumsi endpoint ini ada dan mengembalikan data user)
+
       final response = await _authApi.getProfile();
       return UserModel.fromJson(response.data['data']);
     } catch (e) {
-      // Jika token tidak valid/expired, hapus token
+
       await _storageService.deleteToken();
       return null;
     }

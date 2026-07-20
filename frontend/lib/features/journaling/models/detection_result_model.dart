@@ -1,4 +1,4 @@
-// lib/features/journal/models/detection_result_model.dart
+
 class DetectionResultModel {
   final Map<String, dynamic> journal;
   final Map<String, dynamic> hasilDeteksi;

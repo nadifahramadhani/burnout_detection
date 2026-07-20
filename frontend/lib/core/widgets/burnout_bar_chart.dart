@@ -1,4 +1,4 @@
-// lib/core/widgets/burnout_bar_chart.dart
+
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../constants/app_colors.dart';
@@ -38,7 +38,7 @@ class BurnoutBarChart extends StatelessWidget {
             sideTitles: SideTitles(
               showTitles: true,
               interval: 20,
-              reservedSize: 30, // Diberi ruang agar angka tidak terpotong
+              reservedSize: 30,
               getTitlesWidget: (value, meta) => Text(
                 value.toInt().toString(),
                 style: const TextStyle(fontSize: 10, color: Colors.grey),
@@ -48,7 +48,7 @@ class BurnoutBarChart extends StatelessWidget {
           bottomTitles: AxisTitles(
             sideTitles: SideTitles(
               showTitles: true,
-              reservedSize: 30, // Diberi ruang agar tanggal tidak terpotong
+              reservedSize: 30,
               getTitlesWidget: (value, meta) {
                 if (value.toInt() < 0 || value.toInt() >= dates.length)
                   return const SizedBox();
@@ -72,7 +72,7 @@ class BurnoutBarChart extends StatelessWidget {
                 toY: scores[index],
                 color: _getLavenderShade(
                   scores[index],
-                ), // Warna Gradasi Lavender
+                ),
                 width: 16,
                 borderRadius: const BorderRadius.vertical(
                   top: Radius.circular(4),
@@ -86,9 +86,9 @@ class BurnoutBarChart extends StatelessWidget {
   }
 
   Color _getLavenderShade(double y) {
-    if (y <= 30) return AppColors.lav200; // Lavender terang
-    if (y <= 60) return AppColors.lav400; // Lavender medium
-    if (y <= 80) return AppColors.lav600; // Lavender tua
-    return AppColors.lav900; // Lavender paling pekat
+    if (y <= 30) return AppColors.lav200;
+    if (y <= 60) return AppColors.lav400;
+    if (y <= 80) return AppColors.lav600;
+    return AppColors.lav900;
   }
 }

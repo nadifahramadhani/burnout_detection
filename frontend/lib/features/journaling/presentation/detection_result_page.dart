@@ -1,4 +1,4 @@
-// lib/features/detection/presentation/detection_result_page.dart
+
 import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_typography.dart';
@@ -13,7 +13,7 @@ class DetectionResultPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Ambil tanggal dari data jurnal jika ada, kalau kosong gunakan string default
+
     final String currentDate = resultData.journal['created_at'] != null
         ? resultData.journal['created_at'].toString().split('T')[0]
         : 'Tidak diketahui';
@@ -80,8 +80,7 @@ class DetectionResultPage extends StatelessWidget {
   }
 
   Widget _buildBurnoutRiskCard(Map<String, dynamic> deteksi) {
-    // --- PERBAIKAN DI SINI ---
-    // Menggunakan double.tryParse agar aman meskipun backend mengirim format String
+
     double skor = 0.0;
     if (deteksi['burnout_score'] != null) {
       skor = double.tryParse(deteksi['burnout_score'].toString()) ?? 0.0;
@@ -191,7 +190,7 @@ class DetectionResultPage extends StatelessWidget {
   }
 
   Widget _buildFeltMoodCard(Map<String, dynamic> journal) {
-    // 1. AMBIL TEKS DARI BACKEND, LALU UBAH JADI OBJEK MOOD
+
     final moodLabel = journal['mood'] ?? 'Biasa Aja';
     final moodData = AppMoods.getMood(moodLabel);
 
@@ -218,21 +217,21 @@ class DetectionResultPage extends StatelessWidget {
               ),
               Row(
                 children: [
-                  // 2. UBAH CONTAINER KOSONG MENJADI GAMBAR MOOD
+
                   Container(
                     width:
-                        32, // Dibesarkan sedikit dari 24 ke 32 agar gambarnya terlihat
+                        32,
                     height: 32,
                     padding: const EdgeInsets.all(4),
                     decoration: BoxDecoration(
-                      color: moodData.color, // Warna dinamis
+                      color: moodData.color,
                       shape: BoxShape.circle,
                     ),
-                    child: Image.asset(moodData.imagePath), // Gambar karakter
+                    child: Image.asset(moodData.imagePath),
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    moodData.label, // Teks yang rapi dari AppMoods
+                    moodData.label,
                     style: AppTypography.body2.copyWith(
                       color: AppColors.dark,
                       fontWeight: AppTypography.bold,
@@ -406,7 +405,7 @@ class DetectionResultPage extends StatelessWidget {
               Navigator.pushAndRemoveUntil(
                 context,
                 MaterialPageRoute(builder: (context) => const MainPage()),
-                (route) => false, // false artinya hapus semua route sebelumnya
+                (route) => false,
               );
             },
             child: Text(
@@ -435,7 +434,7 @@ class DetectionResultPage extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                   builder: (context) =>
-                      const MainPage(initialIndex: 2), // 2 = Tab History
+                      const MainPage(initialIndex: 2),
                 ),
                 (route) => false,
               );

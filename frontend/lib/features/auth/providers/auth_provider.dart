@@ -70,8 +70,6 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Di dalam class AuthProvider
-  // Di dalam class AuthProvider
   Future<bool> checkAuthStatus() async {
     _isLoading = true;
     notifyListeners();
@@ -81,11 +79,11 @@ class AuthProvider extends ChangeNotifier {
       _user = user;
       _isLoading = false;
       notifyListeners();
-      return true; // Sesi aktif
+      return true;
     }
 
     _isLoading = false;
     notifyListeners();
-    return false; // Harus login ulang
+    return false;
   }
 }

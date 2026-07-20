@@ -15,30 +15,29 @@ class CustomBottomNav extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Padding(
-        // 1. POSISI: Kurangi padding bottom agar lebih dekat dengan garis home device
+
         padding: const EdgeInsets.only(left: 24, right: 24, bottom: 2),
         child: SizedBox(
           width: double.infinity,
-          height: 104, // Tambah ruang total agar tidak overflow
+          height: 104,
           child: Stack(
             clipBehavior: Clip.none,
             alignment: Alignment.bottomCenter,
             children: [
-              // 1. Kapsul Dasar (Bawah)
+
               Container(
                 height:
-                    80, // UKURAN: Kapsul dibesarkan (sebelumnya 72) agar nge-hug konten
+                    80,
                 decoration: BoxDecoration(
                   color: AppColors.mint900,
                   borderRadius: BorderRadius.circular(40),
                 ),
               ),
 
-              // 2. Lingkaran Besar di Tengah (Sebagai Tonjolan)
               Positioned(
                 top: 0,
                 child: Container(
-                  width: 86, // Ukuran tonjolan disesuaikan dengan kapsul
+                  width: 86,
                   height: 86,
                   decoration: const BoxDecoration(
                     color: AppColors.mint900,
@@ -47,16 +46,15 @@ class CustomBottomNav extends StatelessWidget {
                 ),
               ),
 
-              // 3. Tombol Navigasi (Konten)
               Positioned(
-                bottom: 8, // Beri jarak sedikit dari dasar kapsul
+                bottom: 8,
                 left: 0,
                 right: 0,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    // Tombol Kiri (Home)
+
                     _buildNavItem(
                       icon: Icons.home_filled,
                       label: 'Home',
@@ -64,11 +62,10 @@ class CustomBottomNav extends StatelessWidget {
                       onTap: () => onTap(0),
                     ),
 
-                    // Tombol Tengah (Jurnaling)
                     Padding(
                       padding: const EdgeInsets.only(
                         bottom: 24,
-                      ), // Angkat tombol tengah
+                      ),
                       child: _buildNavItem(
                         icon: Icons.auto_fix_high,
                         label: 'Jurnaling',
@@ -77,7 +74,6 @@ class CustomBottomNav extends StatelessWidget {
                       ),
                     ),
 
-                    // Tombol Kanan (History)
                     _buildNavItem(
                       icon: Icons.bookmark,
                       label: 'History',
@@ -107,9 +103,9 @@ class CustomBottomNav extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          // LINGKARAN INDIKATOR
+
           Container(
-            width: 48, // UKURAN: Disesuaikan agar fit dan tidak overflow
+            width: 48,
             height: 48,
             decoration: BoxDecoration(
               color: isActive ? AppColors.mint50 : Colors.transparent,
@@ -118,13 +114,13 @@ class CustomBottomNav extends StatelessWidget {
             child: Center(
               child: Icon(
                 icon,
-                size: 26, // Ukuran ikon diseimbangkan
+                size: 26,
                 color: isActive ? AppColors.mint900 : Colors.white,
               ),
             ),
           ),
           const SizedBox(height: 4),
-          // TEKS LABEL
+
           Text(
             label,
             style: TextStyle(

@@ -11,7 +11,6 @@ class JournalCard extends StatelessWidget {
   final String statusText;
   final Color statusColor;
 
-  // Nilai-nilai statistik kecil
   final String sleepValue;
   final String workoutValue;
   final String focusValue;
@@ -39,36 +38,36 @@ class JournalCard extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.lav50, // Latar card ungu sangat muda
+        color: AppColors.lav50,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // HEADER CARD: Mood Icon & Text (Kiri) + Tanggal & Status (Kanan)
+
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              // Bagian Kiri (Icon + Mood)
+
               Padding(
                 padding: const EdgeInsets.only(top: 8),
                 child: Row(
                   children: [
-                    // Lingkaran Placeholder Icon Mood
+
                     Container(
                       width: 28,
                       height: 28,
                       padding: const EdgeInsets.all(
                         4,
-                      ), // Beri jarak agar gambar tidak mentok
+                      ),
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: moodData.color, // Gunakan warna dinamis
+                        color: moodData.color,
                       ),
                       child: Image.asset(
                         moodData.imagePath,
-                      ), // Munculkan gambar karakternya
+                      ),
                     ),
                     const SizedBox(width: 8),
                     Text(
@@ -83,7 +82,6 @@ class JournalCard extends StatelessWidget {
                 ),
               ),
 
-              // Bagian Kanan (Tanggal + Pill Status)
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
@@ -95,7 +93,7 @@ class JournalCard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 6),
-                  // Cari bagian Container statusText di lib/core/widgets/journal_card.dart
+
                   Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 10,
@@ -110,7 +108,7 @@ class JournalCard extends StatelessWidget {
                       style: AppTypography.body2.copyWith(
                         fontSize: 10,
                         fontWeight: FontWeight.bold,
-                        // LOGIKA WARNA TEKS: Gunakan putih jika statusColor gelap, hitam jika terang
+
                         color:
                             (statusColor == AppColors.burnoutHigh ||
                                 statusColor == AppColors.burnoutCritical)
@@ -125,12 +123,10 @@ class JournalCard extends StatelessWidget {
           ),
           const SizedBox(height: 12),
 
-          // TEKS KONTEN JURNAL (Sekarang menggunakan Expandable Widget)
           ExpandableJournalText(text: content),
 
           const SizedBox(height: 16),
 
-          // BOX STATISTIK (Bisa digeser horizontal jika layar HP terlalu kecil)
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Row(
@@ -145,7 +141,7 @@ class JournalCard extends StatelessWidget {
                   'Sosial',
                   socialValue,
                   'x',
-                ), // Diubah ke 'x' (frekuensi istirahat) sesuai diskusi sebelumnya
+                ),
                 const SizedBox(width: 8),
                 _buildStatBox('Kafein', caffeineValue, 'mg'),
               ],
@@ -156,7 +152,6 @@ class JournalCard extends StatelessWidget {
     );
   }
 
-  // Helper untuk membuat box putih statistik di bawah
   Widget _buildStatBox(String label, String value, String unit) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
@@ -170,7 +165,7 @@ class JournalCard extends StatelessWidget {
             label,
             style: AppTypography.body2.copyWith(
               fontSize: 10,
-              color: AppColors.lav900, // Warna teks ungu tua
+              color: AppColors.lav900,
             ),
           ),
           const SizedBox(height: 4),
@@ -201,9 +196,6 @@ class JournalCard extends StatelessWidget {
   }
 }
 
-// ==========================================
-// WIDGET BARU: Teks Jurnal yang Bisa Buka-Tutup
-// ==========================================
 class ExpandableJournalText extends StatefulWidget {
   final String text;
 
@@ -218,11 +210,10 @@ class _ExpandableJournalTextState extends State<ExpandableJournalText> {
 
   @override
   Widget build(BuildContext context) {
-    // Batas jumlah karakter sebelum dipotong
+
     const int maxLength = 90;
     final String fullText = widget.text;
 
-    // Jika teksnya memang sudah pendek, tampilkan biasa tanpa tombol
     if (fullText.length <= maxLength) {
       return Text(
         '“$fullText”',
@@ -233,7 +224,6 @@ class _ExpandableJournalTextState extends State<ExpandableJournalText> {
       );
     }
 
-    // Teks yang akan ditampilkan berdasarkan status isExpanded
     final String displayText = isExpanded
         ? fullText
         : '${fullText.substring(0, maxLength)}...';
@@ -258,7 +248,7 @@ class _ExpandableJournalTextState extends State<ExpandableJournalText> {
               text: isExpanded ? 'Tutup' : 'Selengkapnya',
               style: AppTypography.body2.copyWith(
                 color: AppColors
-                    .mint900, // Warna hijau mint agar terlihat bisa diklik
+                    .mint900,
                 fontSize: 11,
                 fontWeight: AppTypography.bold,
               ),
